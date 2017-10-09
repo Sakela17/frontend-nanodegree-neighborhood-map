@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Explore downtown Barcelona</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+</head>
+<body class="container">
+    <!--<main class="row">-->
+        <header class="row">
+            <h2 class="col-xs-12">Explore 'Old City' of Barcelona, Spain</h2>
+
+        </header>
+    <div class="row">
+        <form class="col-xs-10 multiselect">
+            <!--<div class="multiselect">-->
+
+            <div class="selectBox" onclick="showCheckboxes()">
+                <span class="filter_arrow"></span>
+                <select>
+                    <option>Choose your POI</option>
+                </select>
+                <div class="overSelect"></div>
+            </div>
+            <div id="checkboxes">
+                <label for="one"><input type="checkbox" id="one" data-bind="checked: toggleAllLabel, click: toggleAllMarkers"/>
+                    All</label>
+                <label for="two"><input type="checkbox" id="two" data-bind="checked: toggleEatLabel, click: toggleEatMarkers"/>
+                    Eat</label>
+                <label for="three"><input type="checkbox" id="three" data-bind="checked: toggleShopLabel, click: toggleShopMarkers"/>
+                    Shop</label>
+                <label for="four"><input type="checkbox" id="four" data-bind="checked: toggleStayLabel, click: toggleStayMarkers"/>
+                    Stay</label>
+            </div>
+            <!--</div>-->
+        </form>
+        <button class="col-xs-2" type="button">Go</button>
+    </div>
+        <div id="map" class="row"></div>
+
+
+
+    <div>List Results</div>
+    <img src="img/supermarket.png" alt="">
+
+
+    <!--</main>-->
+
+    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&callback=mapInit" async defer></script>-->
+    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&libraries=places,geometry,drawing&callback=mapInit" async defer></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!--<script src="jquery.sumoselect.min.js"><script>-->
+    <!--<link href="sumoselect.css" rel="stylesheet" />-->
+    <script src="js/script.js"></script>
+
+</body>
+</html>
