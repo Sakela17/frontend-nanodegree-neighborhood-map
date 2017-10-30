@@ -1,7 +1,10 @@
+console.log('check');
 var cityMap;
 var infowindow;
 var bounds;
 
+var objLit = {};
+var fourSquareData = {};
 
 var storeData = [];
 var lodgingData = [];
@@ -16,6 +19,7 @@ var requestTypes = ['restaurant', 'store', 'lodging'];
 
 
 function mapInit() {
+    console.log($('#map_canvas').length);
     var styles = [
         {
             stylers: [
@@ -32,6 +36,7 @@ function mapInit() {
         // styles: styles
         // mapTypeControl: false
     };
+
     // Constructor creates a new map - only center and zoom are required.
     cityMap = new google.maps.Map(document.getElementById('map'), mapProperties);
     // console.log(mapProperties.center);
@@ -39,6 +44,15 @@ function mapInit() {
     bounds = new google.maps.LatLngBounds();
 
     infowindow = new google.maps.InfoWindow();
+
+    //
+    // var newMarker = new google.maps.Marker({
+    //     position: objLit,
+    //     map: citiMap
+    // });
+
+
+
     var service = new google.maps.places.PlacesService(cityMap);
     // Loop over requestTypes array to get a list of nearby locations matching the specified type
     requestTypes.forEach(function(type) {
@@ -54,7 +68,9 @@ function mapInit() {
                     marker,
                     // length = 1;
                     length = results.length;
-                for (i = 0; i < length; i++) {
+                for (i = 0; i < 10; i++) {
+                    console.log(results[i].geometry.location);
+                    // location = {lat: 41.380643, lng: 2.16764};
                     location = results[i].geometry.location;
                     placeName = results[i].name;
                     // Create marker for each location
@@ -273,7 +289,6 @@ var viewModel = function() {
     };
 
 
-
     // self.toggleVisibility = function() {
     //     // console.log(this.checkSome());
     //
@@ -317,34 +332,33 @@ ko.applyBindings(new viewModel());
 function getPhotos(item) {
     var baseImgURL = 'https://irs3.4sqi.net/img/general/'; // base url to retrieve venue photos
 
-    $.ajax({
-        url: 'https://api.foursquare.com/v2/venues/' + item.venue.id + '/photos?client_id=RG0BDGPCIXRYCKU3MGO2K4NSMZQMEZG3PVX1IEQQ1W5V5OMF&client_secret=1OVPLSTAD3E0PNUHRMZVSFC24NJS0YATRZSTZ0BCWGPU5AKU&v=20130815',
-        dataType: 'jsonp',
-        success: function(data) {
-            // console.log(data);
 
-            var imgItems = data.response.photos.items;
-            // console.log(imgItems);
 
-            // set venu photo data in venue photo albumn
-            for (var i in imgItems) {
-                var venueImgURL = 'https://irs3.4sqi.net/img/general/width100' + imgItems[i].suffix;
-                var venueImgObj = {
-                    href: venueImgURL,
-                    title: item.venue.name
-                };
-                // push venue photo data object to venue photo albumn
-                item.venue.photos.groups.push(venueImgURL);
-            }
-
-            item.venue.firstImage = item.venue.photos.groups[0];
-
-            // console.log(item.venue.firstImage);
+    var fourSquareData = {
+        eatVenues: [],
+        shopVenues: [],
+        // 4d4b7105d754a06378d81259,4bf58dd8d48988d1fa931735
+        request:  function() {
+            $.ajax({
+                url: 'https://api.foursquare.com/v2/venues/search/?ll=41.3806249,2.1673057000000426&radius=250&categoryId=4d4b7105d754a06374d81259&client_id=EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY&client_secret=TH55VNBSYPX3ZZOPAERLTEBLTQBDWUPUCISGTBRJH3JM3ZZG&v=20131124',
+                dataType: 'jsonp',
+                success: function(data) {
+                    // console.log(data);
+                    data.response.venues.forEach(function(venue) {
+                        fourSquareData.eatVenues.push({lat: venue.location.lat, lng: venue.location.lng});
+                        console.log(fourSquareData.eatVenues);
+                    })
+                },
+                fail: function(){
+                    console.log('error');
+                }
+            });
         }
-    });
+    };
+    fourSquareData.request();
 }
 
-
+getPhotos();
 
 
 var expanded = false;

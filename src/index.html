@@ -8,54 +8,58 @@
     <link rel="stylesheet" href="css/styles.css">
 
 </head>
-<body class="container">
-    <!--<main class="row">-->
-        <header class="row">
-            <h2 class="col-xs-12">Explore 'Old City' of Barcelona, Spain</h2>
-
-        </header>
-    <div class="row">
-        <form class="col-xs-10 multiselect">
-            <!--<div class="multiselect">-->
-
-            <div class="selectBox" onclick="showCheckboxes()">
+<body class="container-fluid">
+    <header class="row">
+        <h2 class="col-xs-12">Explore 'Old City' of Barcelona, Spain</h2>
+    </header>
+    <nav class="row">
+        <form class="col-xs-12 multiselect">
+            <div class="selectBox" data-bind="click: toggleDropdown">
                 <span class="filter_arrow"></span>
                 <select>
                     <option>Choose your POI</option>
                 </select>
                 <div class="overSelect"></div>
             </div>
-            <div id="checkboxes">
-                <label for="one"><input type="checkbox" id="one" data-bind="checked: toggleAllLabel, click: toggleAllMarkers"/>
+            <div style="display: none" id="checkboxes" data-bind="visible: dropdownMenu">
+                <label for="one"><input type="checkbox" id="one" value="all" data-bind="checked: toggleAllLabel, click: toggleAllMarkers"/>
                     All</label>
-                <label for="two"><input type="checkbox" id="two" data-bind="checked: toggleEatLabel, click: toggleEatMarkers"/>
+                <label for="two"><input type="checkbox" id="two" value="eat" data-bind="checked: toggleEatLabel, click: toggleEatMarkers"/>
                     Eat</label>
-                <label for="three"><input type="checkbox" id="three" data-bind="checked: toggleShopLabel, click: toggleShopMarkers"/>
+                <label for="three"><input type="checkbox" id="three" value="shop" data-bind="checked: toggleShopLabel, click: toggleShopMarkers"/>
                     Shop</label>
-                <label for="four"><input type="checkbox" id="four" data-bind="checked: toggleStayLabel, click: toggleStayMarkers"/>
+                <label for="four"><input type="checkbox" id="four" value="stay" data-bind="checked: toggleStayLabel, click: toggleStayMarkers"/>
                     Stay</label>
+
             </div>
-            <!--</div>-->
         </form>
-        <button class="col-xs-2" type="button">Go</button>
+        <!-- <button class="col-xs-2" type="button">Go</button> -->
+    </nav>
+    <div class="row" id="map-holder">
+        <div id="map"></div>
     </div>
-        <div id="map" class="row"></div>
-
-
-
-    <div>List Results</div>
+    <div class="row" id="drawer">
+        <h2 class="col-xs-12" id="drawer-header">Venue Overview</h2>
+        <div class="col-xs-12" id="drawer-content" data-bind="with: currentMarker">
+            <div class="col-xs-3" id="venue-image">
+                <img data-bind="attr: {src: photo}" src="" alt="venue's best photo">                
+            </div>
+            <div class="col-xs-9" id="venue-details">
+                <h3 data-bind="text: title"></h3>
+                <p data-bind="text: address"></p>
+                <p data-bind="text: phone"></p>
+                <span class="stars"></span>
+            </div>
+        </div>
+    </div>
     <img src="img/supermarket.png" alt="">
 
-
-    <!--</main>-->
-
-    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&callback=mapInit" async defer></script>-->
-    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&libraries=places,geometry,drawing&callback=mapInit" async defer></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!--<script src="jquery.sumoselect.min.js"><script>-->
-    <!--<link href="sumoselect.css" rel="stylesheet" />-->
-    <script src="js/script.js"></script>
+    <script src="js/new_script.js"></script>
+    <!-- Moved Google Maps API script tag below the custom code to make sure the callback function is declared before Maps API is loaded -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&libraries=places&callback=viewModel.initialize" async defer></script>
+
 
 </body>
 </html>

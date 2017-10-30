@@ -1,16 +1,22 @@
 
 html,
-body {
-    font-family: Arial, sans-serif;
+body,
+h3,
+h2,
+p {
+    /*font-family: Arial, sans-serif;*/
+    font-family: "Times New Roman", Times, serif;
     /*height: 100%;*/
     margin: 0;
     padding: 0;
+    /*font-size: 16px;*/
+    /*font-size: 1.5em;*/
 }
-.container-fluid {
+/*.container-fluid {
     width: 100%;
     height: 100%;
     /*position: relative;*/
-}
+/*}*/
 /*header {*/
     /*z-index: 2;*/
     /*position: fixed;*/
@@ -56,7 +62,7 @@ header {
 /*}*/
 
 h2 {
-    font-size: 2em;
+    font-size: 1.5em;
     /*height: 100%;*/
     margin: 0;
 }
@@ -69,15 +75,29 @@ h2 {
     /*display: flex;*/
 /*}*/
 
+#map-holder {
+    background: #f5f5f5;
+    height: 80vh;
+    position: relative;
+    /*top: 7em;*/
+    /*bottom: 300px;*/
+    /*width: 100%;*/
+    /*overflow: hidden;*/
+    /*z-index: 0;*/
+
+}
+
 #map {
     /*top: 4em;*/
     /*bottom:0;*/
-    height: 300px;
+    /*background: #f5f5f5;*/
+    /*width: 100%;*/
+    height: 100%;
     /*position: absolute;*/
-    left: 0;
-    right: 0;
+    /*left: 0;*/
+    /*right: 0;*/
     overflow: hidden;
-    z-index: 0;
+    /*z-index: 0;*/
 }
 /*.options-box {*/
     /*background: #fff;*/
@@ -114,30 +134,57 @@ h2 {
 
 header {
     margin: 0;
-    /*height: 4em;*/
-    padding: 0.5em;
-    display: flex;
+    height: 10vh;
+    padding: 2% 0;
+    position: relative;
+    /*display: flex;*/
     font-family: "Times New Roman", Times, serif;
-    color: white;
+    font-style: oblique;
+    /*color: white;*/
+    
     text-align: center;
     background: #232323;
+    /*text-align: center;*/
+    /*vertical-align: middle;*/
     /*font-size: 1em;*/
 }
 
+header h2 {
+    /*color: #e2dfdf;*/
+    text-shadow: -2px -2px white, 1px 1px #333;
+
+    /*height: 8vh;*/
+    /*margin: 0;*/
+    /*padding: 1% 0;*/
+    /*padding: 0.5em;*/
+    /*position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 50%;
+    height: 30%;
+    margin: auto;*/
+}
+
+nav {
+    height: 5vh;
+}
+
 .multiselect {
-    /*height: 1.5em;*/
+    /*height: 100%;*/
     /*z-index: 1;*/
     padding: 0;
 }
 
 .selectBox {
-    /*height: 75px;*/
-    /*height: 1em;*/
+    /*height: 100%;*/
+    height: 5vh;
     /*position: relative;*/
     /*z-index: 1;*/
 
     position: relative;
-    padding: 10px 15px;
+    /*padding: 15px 15px;*/
     /*font-size: 1.2em;*/
     font-weight: 400;
     color: #2a2a2a;
@@ -168,6 +215,7 @@ header {
 .selectBox select {
     border: none;
     background: rgb(246,246,246);
+    height: 5vh;
     width: 100%;
     /*font-size: 1.2em;*/
     /*font-weight: bold;*/
@@ -183,13 +231,13 @@ header {
 }
 
 #checkboxes {
-    display: none;
+    /*display: none;*/
     border: 1px #dadada solid;
     opacity: 1;
     background: rgb(246,246,246);
     border-radius: 10px;
     position: absolute;
-    top: 3em;
+    /*top: 15vh;*/
     width: 100%;
     /*overflow: hidden;*/
     z-index: 1;
@@ -206,7 +254,7 @@ header {
 /*}*/
 
 button {
-    padding: 10px 15px;
+    /*padding: 10px 15px;*/
     /*font-size: 1.2em;*/
     font-weight: 400;
     color: #fff;
@@ -235,8 +283,101 @@ button {
     background: rgb(246,246,246) url(../img/filter-span.png) no-repeat;
     position: absolute;
     width: 10px;
-    height: 14px;
-    top: 12px;
-    right: 20px;
+    height: 5vh;
+    margin: 2% 0;
+    /*vertical-align: middle;*/
+    /*float: right;*/
+    /*padding: 5px;*/
+    /*top: 12px;*/
+    right: 1%;
     z-index: 0;
+}
+
+#drawer {
+    /*width: 300px;*/
+    /*height: 20vh;*/
+    position: relative;
+    background: #dcdcdc;
+    /*bottom: 30px;*/
+    /*-webkit-transform: translate(-300px, 0);*/
+    /*transform: translate(0, 300px);*/
+    /*transition: transform 0.3s ease;*/
+    /*width:162px;*/
+    height: 200px;
+}
+
+#drawer.open {
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+}
+
+
+
+#drawer-header {
+    /*font-size: 1.5em;*/
+    text-shadow: 1px 1px #ffffff;
+    /* IE proprietary filter that emulates CSS3 text-shadow property for IE9 and older */
+    filter: progid:DXImageTransform.Microsoft.Shadow(color=#0000FF,direction=45);
+    background: linear-gradient(to bottom, rgba(200,200,200,1) 0%,rgba(191,191,191,1) 100%);
+    /*background: #bfbfbf;*/
+    font-weight: 600;
+    font-style: italic;
+    height: 5vh;
+    text-align: center;
+    padding: 1% 0;
+}
+
+#venue-image {
+    position: relative;
+    height: 12vh;
+    padding: 0;
+    border: 1px solid #545454;
+    -moz-box-shadow: 1px 1px 0px #e3e3e3;
+    -webkit-box-shadow: 1px 1px 0px #e3e3e3;
+    box-shadow: 1px 1px 0px #e3e3e3;
+}
+
+#drawer-content {
+
+}
+
+img {
+    min-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+#venue-details {
+    height: 12vh;
+    padding: 0 0 0 5%;
+    border: 1px solid #545454;
+    font-size: 100%;
+}
+
+#venue-details h3 {
+    font-weight: 600;
+    font-size: 1.2em;
+    color: #2a2a2a;
+    margin-bottom: -4px;
+}
+
+#venue-details p {
+    font-weight: 300;
+    margin-bottom: -4px;
+    /*padding-bottom: 0;*/
+}
+
+
+/* use sprite image for background. Initially is set to show grey stars */
+.stars, .stars > span {
+    display: inline-block;
+    background: url(../img/stars.png) 0 -16px repeat-x;
+    width: 80px;
+    height: 16px;
+}
+
+/* set backgournd image to make yellow stars visible */
+.stars > span {
+    /*max-width:80px;*/
+    background-position: 0 0;
 }
