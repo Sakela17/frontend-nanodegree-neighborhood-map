@@ -315,6 +315,11 @@ button {
 
 #drawer-header {
     /*font-size: 1.5em;*/
+    /* Make text unselectable to prevent browser's default behaviors when tapping drawer on mobile */
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;         
     text-shadow: 1px 1px #ffffff;
     /* IE proprietary filter that emulates CSS3 text-shadow property for IE9 and older */
     filter: progid:DXImageTransform.Microsoft.Shadow(color=#0000FF,direction=45);
