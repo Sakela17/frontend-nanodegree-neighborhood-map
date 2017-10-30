@@ -35,7 +35,7 @@ var mapData = {
 var viewModel = {
     initialize: function() {
         this.initMap();
-        // this.sendRequests();
+        this.sendRequests();
         // this.getImage();
     },
     initMap: function() {
