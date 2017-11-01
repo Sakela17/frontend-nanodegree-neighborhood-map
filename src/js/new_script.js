@@ -14,6 +14,46 @@
 
 // document.addEventListener('DOMContentLoaded', loadScript);
 
+var touchstartX = 0;
+var touchstartY = 0;
+var touchendX = 0;
+var touchendY = 0;
+
+var gestureZone = document.getElementById('drawer');
+
+gesuredZone.addEventListener('touchstart', function(event) {
+    touchstartX = event.screenX;
+    touchstartY = event.screenY;
+}, false);
+
+gesuredZone.addEventListener('touchend', function(event) {
+    touchendX = event.screenX;
+    touchendY = event.screenY;
+    handleGesure();
+}, false); 
+
+function handleGesure() {
+    var swiped = 'swiped: ';
+    // if (touchendX < touchstartX) {
+        // alert(swiped + 'left!');
+    // }
+    // if (touchendX > touchstartX) {
+        // alert(swiped + 'right!');
+    // }
+    if (touchendY < touchstartY) {
+        alert(swiped + 'down!');
+    }
+    if (touchendY > touchstartY) {
+        alert(swiped + 'up!');
+    }
+    // if (touchendY == touchstartY) {
+        // alert('tap!');
+    // }
+}
+
+
+
+
 var mapData = {
     map: null,
     infoWindow: null,
@@ -226,10 +266,12 @@ var viewModel = {
                         viewModel.currentMarker().setAnimation(null);
                         markerCopy.setAnimation(google.maps.Animation.BOUNCE);
                         viewModel.currentMarker(markerCopy);
+                    } else {
+
                     }
-                    console.log(markerCopy.id);
+                    // console.log(markerCopy.id);
                     viewModel.getVenueDetails(markerCopy);
-                    console.log(viewModel.currentMarker());
+                    // console.log(viewModel.currentMarker());
                     // var drawer = $('#drawer').addClass('open');
 
                     // if (markerCopy.getAnimation() !== null) {
