@@ -15,7 +15,7 @@
     <nav class="row">
         <form class="col-xs-12 multiselect">
             <div class="selectBox" data-bind="click: toggleDropdown">
-                <span class="filter_arrow"></span>
+                <!-- <span class="filter_arrow"></span> -->
                 <select>
                     <option>Choose your POI</option>
                 </select>
@@ -38,11 +38,11 @@
     <div class="row" id="map-holder">
         <div id="map"></div>
     </div>
-    <div class="row" id="drawer">
+    <div class="row" id="drawer" data-bind="click: toggleDrawer">
         <h2 class="col-xs-12" id="drawer-header">Venue Overview</h2>
         <div class="col-xs-12" id="drawer-content" data-bind="with: currentMarker">
             <div class="col-xs-3" id="venue-image">
-                <img data-bind="attr: {src: photo}" src="" alt="venue's best photo">                
+                <img data-bind="attr: {src: photo}" src="" alt="venue image">                
             </div>
             <div class="col-xs-9" id="venue-details">
                 <h3 data-bind="text: title"></h3>

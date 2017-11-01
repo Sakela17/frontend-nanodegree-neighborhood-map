@@ -193,6 +193,7 @@ var viewModel = {
     },
     addMarkers: function(arr) {
         var marker;
+        
         arr.forEach(function(venue, ind){
             marker = new google.maps.Marker({
                 map: mapData.map,
@@ -208,12 +209,15 @@ var viewModel = {
                 id: venue.id
             });
             // Create a click event listener to open infoWindow with a name of the place at each marker
-            // Wrap event listener function in IIFE to pass a current value of placeName variable
-            // to event listener on each iteration
+            // Wrap event listener function in IIFE to pass a current marker on each iteration
             marker.addListener('click', (function(markerCopy) {
                 return function() {
+                    viewModel.toggleDrawer();
                     mapData.infoWindow.setContent(markerCopy.title);
                     mapData.infoWindow.open(mapData.map, this);
+                    // tp = $(this).css('top') == '0px' ? '-130px' : '0px';
+                        // $(this).animate( {top: tp }, 500);
+
                     if (viewModel.currentMarker() === null) {
                         markerCopy.setAnimation(google.maps.Animation.BOUNCE);
                         viewModel.currentMarker(markerCopy);
@@ -240,10 +244,11 @@ var viewModel = {
             // markerArr.push(marker);
             mapData.bounds.extend(marker.position);
         });
-        $("#drawer").click(function () {
-                        tp = $(this).css('top') == '0px' ? '-150px' : '0px';
-                        $(this).animate( {top: tp }, 500);
-                    });
+        // $("#drawer").click(function () {
+        //     console.log(this);
+        //                 tp = $(this).css('top') == '0px' ? '-130px' : '0px';
+        //                 $(this).animate( {top: tp }, 500);
+        //             });
         console.log(mapData.restaurantMarkersData);
         console.log(mapData.storeMarkersData);
         console.log(mapData.lodgingMarkersData);       
@@ -255,6 +260,18 @@ var viewModel = {
         } else {
             this.dropdownMenu(true);
         }
+    },
+    toggleDrawer: function() {
+        var drawer = $('#drawer');
+        var drawerTop = drawer.css('top');
+        console.log(drawerTop);
+        if (drawerTop === '0px') {
+            drawerTop = '-130px';
+        } else {
+            drawerTop = '0px';
+        }
+        // drawerTop === '0px' ? '-130px' : '0px';
+        drawer.animate( {top: drawerTop }, 500);
     },
     dropdownMenu: ko.observable(false),
     currentMarker: ko.observable(null),
