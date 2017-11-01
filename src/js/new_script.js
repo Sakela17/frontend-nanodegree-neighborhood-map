@@ -21,12 +21,12 @@ var touchendY = 0;
 
 var gestureZone = document.getElementById('drawer');
 
-gesuredZone.addEventListener('touchstart', function(event) {
+gestureZone.addEventListener('touchstart', function(event) {
     touchstartX = event.screenX;
     touchstartY = event.screenY;
 }, false);
 
-gesuredZone.addEventListener('touchend', function(event) {
+gestureZone.addEventListener('touchend', function(event) {
     touchendX = event.screenX;
     touchendY = event.screenY;
     handleGesure();
