@@ -14,42 +14,56 @@
 
 // document.addEventListener('DOMContentLoaded', loadScript);
 
-var touchstartX = 0;
-var touchstartY = 0;
-var touchendX = 0;
-var touchendY = 0;
 
-var gestureZone = document.getElementById('drawer');
+$('#drawer').on('swipeup', handleSwipeUp);
+$('#drawer').on('swipedown', handleSwipeDown);
 
-gestureZone.addEventListener('touchstart', function(event) {
-    touchstartX = event.screenX;
-    touchstartY = event.screenY;
-}, false);
-
-gestureZone.addEventListener('touchend', function(event) {
-    touchendX = event.screenX;
-    touchendY = event.screenY;
-    handleGesure();
-}, false); 
-
-function handleGesure() {
-    var swiped = 'swiped: ';
-    // if (touchendX < touchstartX) {
-        // alert(swiped + 'left!');
-    // }
-    // if (touchendX > touchstartX) {
-        // alert(swiped + 'right!');
-    // }
-    if (touchendY < touchstartY) {
-        alert(swiped + 'down!');
-    }
-    if (touchendY > touchstartY) {
-        alert(swiped + 'up!');
-    }
-    // if (touchendY == touchstartY) {
-        // alert('tap!');
-    // }
+function handleSwipeUp() {
+    alert("swiped up");
 }
+
+function handleSwipeDown() {
+    alert('swiped down');
+}
+
+
+
+// var touchstartX = 0;
+// var touchstartY = 0;
+// var touchendX = 0;
+// var touchendY = 0;
+
+// var gestureZone = document.getElementById('drawer');
+
+// gestureZone.addEventListener('touchstart', function(event) {
+//     touchstartX = event.screenX;
+//     touchstartY = event.screenY;
+// }, false);
+
+// gestureZone.addEventListener('touchend', function(event) {
+//     touchendX = event.screenX;
+//     touchendY = event.screenY;
+//     handleGesure();
+// }, false); 
+
+// function handleGesure() {
+//     var swiped = 'swiped: ';
+//     // if (touchendX < touchstartX) {
+//         // alert(swiped + 'left!');
+//     // }
+//     // if (touchendX > touchstartX) {
+//         // alert(swiped + 'right!');
+//     // }
+//     if (touchendY < touchstartY) {
+//         alert(swiped + 'down!');
+//     }
+//     if (touchendY > touchstartY) {
+//         alert(swiped + 'up!');
+//     }
+//     // if (touchendY == touchstartY) {
+//         // alert('tap!');
+//     // }
+// }
 
 
 
@@ -64,19 +78,10 @@ var mapData = {
     lodgingMarkersData: []
 };
 
-
-// var fourSquareData = {
-//     eatVenues: [],
-//     shopVenues: [],
-//     stayVenues: []
-// };
-
-
 var viewModel = {
     initialize: function() {
         this.initMap();
-        this.sendRequests();
-        // this.getImage();
+        // this.sendRequests();
     },
     initMap: function() {
         var mapProperties;
@@ -113,87 +118,74 @@ var viewModel = {
                     viewModel.addMarkers(mapData.restaurantMarkersData);
 
                 } else {
-                    alert("Sorry, cannot load venues for category 'Eat'. Please try again soon.");
+                    alert("There was a problem loading venues for category 'Eat'. Please try again soon.");
                 }                
             },
-            error: function(xhr, ajaxOptions, thrownError) {
-                console.error('Error')
-                alert(xhr.status)
-                alert(thrownError)
-            },
-            complete: function() {
-                console.log('complete');
+            error: function() {
+                $("#eatLabel").append("<strong> - problem loading</strong>");
+                alert("There was a problem loading venues for category 'Eat'. Please try again soon.");
             }
         });
         // request venues in category SHOP & SERVICE (id: 4d4b7105d754a06378d81259)
-        // $.ajax({
-        //     url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.167697&radius=150&categoryId=4d4b7105d754a06378d81259&client_id=EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY&client_secret=TH55VNBSYPX3ZZOPAERLTEBLTQBDWUPUCISGTBRJH3JM3ZZG&v=20131124',
-        //     dataType: 'json',
-        //     success: function(data) {
-        //         if (data.meta.code === 200) {
-        //             console.log(data);
-        //             data.response.venues.forEach(function(venue) {
-        //                 mapData.storeMarkersData.push({
-        //                 name: venue.name,
-        //                 id: venue.id,
-        //                 lat: venue.location.lat,
-        //                 lng: venue.location.lng,
-        //                 address: venue.location.formattedAddress[0] + ',' + venue.location.formattedAddress[1],
-        //                 phone: venue.contact.phone,
-        //                 icon: 'img/supermarket.png'});                       
-        //             });
-        //             viewModel.addMarkers(mapData.storeMarkersData);
+        $.ajax({
+            url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.167697&radius=150&categoryId=4d4b7105d754a06378d81259&client_id=EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY&client_secret=TH55VNBSYPX3ZZOPAERLTEBLTQBDWUPUCISGTBRJH3JM3ZZG&v=20131124',
+            dataType: 'json',
+            success: function(data) {
+                if (data.meta.code === 200) {
+                    console.log(data);
+                    data.response.venues.forEach(function(venue) {
+                        mapData.storeMarkersData.push({
+                        name: venue.name,
+                        id: venue.id,
+                        lat: venue.location.lat,
+                        lng: venue.location.lng,
+                        address: venue.location.formattedAddress[0] + ',' + venue.location.formattedAddress[1],
+                        phone: venue.contact.phone,
+                        icon: 'img/supermarket.png'});                       
+                    });
+                    viewModel.addMarkers(mapData.storeMarkersData);
 
-        //         } else {
-        //             alert("Sorry, cannot load venues for category 'Eat'. Please try again soon.");
-        //         }                
-        //     },
-        //     error: function(xhr, ajaxOptions, thrownError) {
-        //         console.error('Error')
-        //         alert(xhr.status)
-        //         alert(thrownError)
-        //     },
-        //     complete: function() {
-        //         console.log('complete');
-        //     }                
-        // });
-        // // request venues in category HOTEL (id: 4bf58dd8d48988d1fa931735)
-        // $.ajax({
-        //     url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.167697&radius=150&categoryId=4bf58dd8d48988d1fa931735&client_id=EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY&client_secret=TH55VNBSYPX3ZZOPAERLTEBLTQBDWUPUCISGTBRJH3JM3ZZG&v=20131124',
-        //     dataType: 'json',
-        //     success: function(data) {
-        //         if (data.meta.code === 200) {
-        //             data.response.venues.forEach(function(venue) {
-        //                 mapData.lodgingMarkersData.push({
-        //                 name: venue.name,
-        //                 id: venue.id,
-        //                 lat: venue.location.lat,
-        //                 lng: venue.location.lng,
-        //                 address: venue.location.formattedAddress[0] + ',' + venue.location.formattedAddress[1],
-        //                 phone: venue.contact.phone,
-        //                 icon: 'img/lodging.png'});                       
-        //             });
-        //             viewModel.addMarkers(mapData.lodgingMarkersData);
+                } else {
+                    alert("Sorry, cannot load venues for category 'Shop'. Please try again soon.");
+                }                
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+               $("#shopLabel").append("<strong> - problem loading</strong>");
+                alert("There was a problem loading venues for category 'Shop'. Please try again soon.");
+            }               
+        });
+        // request venues in category HOTEL (id: 4bf58dd8d48988d1fa931735)
+        $.ajax({
+            url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.167697&radius=150&categoryId=4bf58dd8d48988d1fa931735&client_id=EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY&client_secret=TH55VNBSYPX3ZZOPAERLTEBLTQBDWUPUCISGTBRJH3JM3ZZG&v=20131124',
+            dataType: 'json',
+            success: function(data) {
+                if (data.meta.code === 200) {
+                    data.response.venues.forEach(function(venue) {
+                        mapData.lodgingMarkersData.push({
+                        name: venue.name,
+                        id: venue.id,
+                        lat: venue.location.lat,
+                        lng: venue.location.lng,
+                        address: venue.location.formattedAddress[0] + ',' + venue.location.formattedAddress[1],
+                        phone: venue.contact.phone,
+                        icon: 'img/lodging.png'});                       
+                    });
+                    viewModel.addMarkers(mapData.lodgingMarkersData);
 
-        //         } else {
-        //             alert("Sorry, cannot load venues for category 'Eat'. Please try again soon.");
-        //         }                
-        //     },
-        //     error: function(xhr, ajaxOptions, thrownError) {
-        //         console.error('Error')
-        //         alert(xhr.status)
-        //         alert(thrownError)
-        //     },
-        //     complete: function() {
-        //         console.log('complete');
-        //     }                
-        // });
+                } else {
+                    alert("Sorry, cannot load venues for category 'Stay'. Please try again soon.");
+                }                
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                $("#stayLabel").append("<strong> - problem loading</strong>");
+                alert("There was a problem loading venues for category 'Stay'. Please try again soon.");
+            }
+        });
     },
     // Add child node which image overlays the parent node's image to show rating (yellow stars)
     // Set image's width using vanue's rating passed in the argument
     showRating: function(r) {
-        // console.log(this);
-        $('.stars').html($('<span/>').width(r*16));
+        $('#stars').html($('<span/>').width(r*16));
     },
     getVenueDetails: function(venue) {
         $.ajax({
@@ -205,14 +197,13 @@ var viewModel = {
                     if (data.response.venue.hasOwnProperty("rating")) {
                         venue.rating = data.response.venue.rating / 2;
                         viewModel.showRating(venue.rating);
-                        console.log(data.response.venue.rating);
-
+                        console.log(venue.rating);
                     }
                     venue.photo = data.response.venue.bestPhoto.prefix + '100x100' + data.response.venue.bestPhoto.suffix;
 
 
                     console.log(venue.photo);
-                    viewModel.currentMarker(venue);
+                    // viewModel.currentMarker(venue);
                     
                 } else {
                     console.log(data.meta.code);
@@ -252,22 +243,26 @@ var viewModel = {
             // Wrap event listener function in IIFE to pass a current marker on each iteration
             marker.addListener('click', (function(markerCopy) {
                 return function() {
-                    viewModel.toggleDrawer();
-                    mapData.infoWindow.setContent(markerCopy.title);
+                    var drawer = $('#drawer');
+                    var drawerTop = drawer.css('top');
+                    var topValue;
+                    mapData.infoWindow.setContent(this.title);
                     mapData.infoWindow.open(mapData.map, this);
-                    // tp = $(this).css('top') == '0px' ? '-130px' : '0px';
-                        // $(this).animate( {top: tp }, 500);
-
-                    if (viewModel.currentMarker() === null) {
-                        markerCopy.setAnimation(google.maps.Animation.BOUNCE);
-                        viewModel.currentMarker(markerCopy);
-                    }
-                    if (viewModel.currentMarker() !== markerCopy) {
-                        viewModel.currentMarker().setAnimation(null);
-                        markerCopy.setAnimation(google.maps.Animation.BOUNCE);
-                        viewModel.currentMarker(markerCopy);
+                    // If new marker is clicked, remove animation from previous marker
+                    // Animate clicked marker and pass it to current marker observable
+                    // , set animation and drawer. remove animation from previous marker
+                    var currMarker = viewModel.currentMarker;
+                    if (this !== currMarker()) {
+                        currMarker().setAnimation(null);
+                        this.setAnimation(google.maps.Animation.BOUNCE);
+                        currMarker(this);
+                        if (drawerTop === '0px') {
+                            drawer.animate( { top: '-130px' }, 500);
+                        }
+                    // Handle drawer position if the same marker is clicked
                     } else {
-
+                        topValue = drawerTop === '0px' ? '-130px' : '0px';
+                        drawer.animate( { top: topValue }, 500);
                     }
                     // console.log(markerCopy.id);
                     viewModel.getVenueDetails(markerCopy);
@@ -293,7 +288,8 @@ var viewModel = {
         //             });
         console.log(mapData.restaurantMarkersData);
         console.log(mapData.storeMarkersData);
-        console.log(mapData.lodgingMarkersData);       
+        console.log(mapData.lodgingMarkersData);
+        viewModel.currentMarker(marker);
     },
     // Show/hide dropdown menu with checkboxes
     toggleDropdown: function() {
@@ -303,20 +299,18 @@ var viewModel = {
             this.dropdownMenu(true);
         }
     },
+    // Handle position of the #drawer element
     toggleDrawer: function() {
         var drawer = $('#drawer');
-        var drawerTop = drawer.css('top');
-        console.log(drawerTop);
-        if (drawerTop === '0px') {
-            drawerTop = '-130px';
-        } else {
-            drawerTop = '0px';
-        }
-        // drawerTop === '0px' ? '-130px' : '0px';
-        drawer.animate( {top: drawerTop }, 500);
+        drawer.toggleClass("open");
+
+
+        // var drawerTop = drawer.css('top');
+        // var topValue = drawerTop === '0px' ? '-130px' : '0px';
+        // drawer.animate({ top: topValue }, 500);
     },
     dropdownMenu: ko.observable(false),
-    currentMarker: ko.observable(null),
+    currentMarker: ko.observable(),
     toggleAllLabel: ko.observable(true),
     toggleEatLabel: ko.observable(true),
     toggleShopLabel: ko.observable(true),
