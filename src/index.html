@@ -19,22 +19,22 @@
         <form class="col-xs-12 multiselect">
             <div class="selectBox" data-bind="click: toggleDropdown">
                 <!-- <span class="filter_arrow"></span> -->
-                <select>
-                    <option>Choose your POI</option>
+                <select data-bind="options: [fillOptions]">
+                    <!-- <option>Choose your POI</option> -->
                 </select>
                 <div class="overSelect"></div>
             </div>
-            <div style="display: none" id="checkboxes" data-bind="visible: dropdownMenu">
-                <label for="one" id="allLabel">
-                    <input type="checkbox" value="all" data-bind="checked: toggleAllLabel, click: toggleAllMarkers"/>All</label>
-                <label for="two" id="eatLabel">
-                    <input type="checkbox" value="eat" data-bind="checked: toggleEatLabel, click: toggleEatMarkers"/>Eat</label>
-                <label for="three" id="shopLabel">
-                    <input type="checkbox" value="shop" data-bind="checked: toggleShopLabel, click: toggleShopMarkers"/>Shop</label>
-                <label for="four" id="stayLabel">
-                    <input type="checkbox" value="stay" data-bind="checked: toggleStayLabel, click: toggleStayMarkers"/>Stay
-                </label>
 
+            <!-- <div class="options-container" data-bind="visible: dropdownMenu"> -->
+            <div style="display: none" id="checkboxes" class="options" data-bind="visible: dropdownMenu">
+                <label>
+                    <input type="checkbox" value="all" data-bind="checked: allSelected"/>All
+                </label>
+                <!-- ko foreach: toggleLabels -->
+                <label>
+                    <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.selectedLabels, event: { change: $parent.toggleMarkers }"><span data-bind="text: $data"></span>
+                </label>
+                <!-- /ko -->
             </div>
         </form>
         <!-- <button class="col-xs-2" type="button">Go</button> -->
@@ -49,11 +49,12 @@
     <div class="row" id="drawer" data-bind="click: toggleDrawer">
         <h2 class="col-xs-12" id="drawer-header">Venue Overview</h2>
         <div class="col-xs-12" id="drawer-content" data-bind="with: currentMarker">
-            <div class="col-xs-3" id="venue-image">
+            <div class="col-xs-4" id="venue-image">
                 <img data-bind="attr: {src: photo}" src="" alt="venue image">                
             </div>
-            <div class="col-xs-9" id="venue-details">
-                <h3 data-bind="text: title"></h3>
+            <div class="col-xs-8" id="venue-details">
+                <!-- click and clickBubble allow for the default click action on a link tag -->
+                <h3><a data-bind="attr: {href: url}, text: title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
                 <p data-bind="text: address"></p>
                 <p data-bind="text: phone"></p>
                 <span id="stars"></span>
@@ -75,7 +76,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script> -->
-    <script src="js/new_script.js"></script>
+    <script src="js/script.js"></script>
     <!-- Moved Google Maps API script tag below the custom code to make sure the callback function is declared before Maps API is loaded -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&libraries=places&callback=viewModel.initialize" async defer></script>
 
