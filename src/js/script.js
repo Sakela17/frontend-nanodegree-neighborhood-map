@@ -73,7 +73,7 @@ var viewModel = {
     initialize: function() {
         console.log('go');
         this.initMap();
-        this.sendAjaxRequests();
+        // this.sendAjaxRequests();
     },
     initMap: function() {
         var mapProperties;
