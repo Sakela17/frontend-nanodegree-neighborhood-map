@@ -375,7 +375,7 @@ li {
     outline: none;
 }
 
-img {
+#venue-details img {
     min-width: 100%;
     max-height: 100%;
     object-fit: cover;
