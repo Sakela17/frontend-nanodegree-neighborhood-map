@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Explore downtown Barcelona</title>
+    <title>Explore downtown Barcelona, Spain</title>
+    <link rel="preconnect" href="https://api.foursquare.com" crossorigin>
+    <link rel="preload" href="img/eat.png" as="image">
+    <link rel="preload" href="img/shop.png" as="image">
+    <link rel="preload" href="img/stay.png" as="image">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-    <!-- <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" /> -->
     <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -14,72 +17,123 @@
         <h2 class="col-xs-12">Explore 'Old City' of Barcelona</h2>
     </header>
     <!---End Header-->
-
     <nav class="row">
         <form class="col-xs-12 multiselect">
-            <div class="selectBox" data-bind="click: toggleDropdown">
-                <!-- <span class="filter_arrow"></span> -->
-                <select data-bind="options: [fillOptions]">
-                    <!-- <option>Choose your POI</option> -->
-                </select>
-                <div class="overSelect"></div>
+            <div id="selectBox" data-bind="event: { click: toggleDropdown }">
+                <select title="dropdown form control" data-bind="options: [fillOptions]"></select>
             </div>
-
-            <!-- <div class="options-container" data-bind="visible: dropdownMenu"> -->
             <div style="display: none" id="checkboxes" class="options" data-bind="visible: dropdownMenu">
                 <label>
                     <input type="checkbox" value="all" data-bind="checked: allSelected"/>All
                 </label>
                 <!-- ko foreach: toggleLabels -->
                 <label>
-                    <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.selectedLabels, event: { change: $parent.toggleMarkers }"><span data-bind="text: $data"></span>
+                    <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.selectedLabels, event: { change: $parent.toggleMarkers }"><span data-bind="attr: { id: $data.toLowerCase() }, text: $data"></span>
                 </label>
                 <!-- /ko -->
             </div>
         </form>
-        <!-- <button class="col-xs-2" type="button">Go</button> -->
     </nav>
     <!---End Nav-->
-
     <div class="row" id="map-holder">
         <div id="map"></div>
     </div>
     <!---End Map Section-->
-
     <div class="row" id="drawer" data-bind="click: toggleDrawer">
         <h2 class="col-xs-12" id="drawer-header">Venue Overview</h2>
-        <div class="col-xs-12" id="drawer-content" data-bind="with: currentMarker">
-            <div class="col-xs-4" id="venue-image">
-                <img data-bind="attr: {src: photo}" src="" alt="venue image">                
-            </div>
-            <div class="col-xs-8" id="venue-details">
-                <!-- click and clickBubble allow for the default click action on a link tag -->
-                <h3><a data-bind="attr: {href: url}, text: title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
-                <p data-bind="text: address"></p>
-                <p data-bind="text: phone"></p>
-                <span id="stars"></span>
-            </div>
+        <!--<div class="col-xs-12 drawer-content" data-bind="with: currentMarker">-->
+            <!--<div class="col-xs-4 venue-image">-->
+                <!--<img data-bind="attr: {src: photo}" src="" alt="venue image">-->
+            <!--</div>-->
+            <!--<div class="col-xs-8 venue-details">-->
+                <!--&lt;!&ndash; click and clickBubble allow for the default click action on a link tag &ndash;&gt;-->
+                <!--<h3><a data-bind="attr: {href: url}, text: title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>-->
+                <!--<p data-bind="text: address"></p>-->
+                <!--<p data-bind="text: phone"></p>-->
+                <!--<span id="stars">-->
+                    <!--<span data-bind="style: { width: rating * 16 + 'px' }"></span>-->
+                <!--</span>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="col-xs-12" id="venue-details" data-bind="click: handleMarker, clickBubble: false">
+            <!-- ko if: $root.selectedLabels().includes('Eat') -->
+            <ul data-bind="foreach: eatListingResults">
+                <li>
+                    <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === $data.id }">
+                        <div class="col-xs-4 venue-image">
+                            <img data-bind="attr: {src: $data.photo}" src="" alt="venue image">
+                        </div>
+                        <div class="col-xs-8 venue-text">
+                            <!--click and clickBubble allow for the default click action on a link tag-->
+                            <h3><a data-bind="attr: {href: $data.url}, text: $data.title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
+                            <p data-bind="text: $data.address"></p>
+                            <p data-bind="text: $data.phone"></p>
+                            <!--<span>-->
+                            <!--<span data-bind="style: { width: rating * 16 + 'px' }"></span>-->
+                            <!--</span>-->
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <!-- /ko -->
+            <!-- ko if: $root.selectedLabels().includes('Shop') -->
+            <ul data-bind="foreach: shopListingResults">
+                <li>
+                    <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === $data.id }">
+                        <div class="col-xs-4 venue-image">
+                            <img data-bind="attr: {src: $data.photo}" src="" alt="venue image">
+                        </div>
+                        <div class="col-xs-8 venue-text">
+                            <!--click and clickBubble allow for the default click action on a link tag-->
+                            <h3><a data-bind="attr: {href: $data.url}, text: $data.title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
+                            <p data-bind="text: $data.address"></p>
+                            <p data-bind="text: $data.phone"></p>
+                            <!--<span>-->
+                            <!--<span data-bind="style: { width: rating * 16 + 'px' }"></span>-->
+                            <!--</span>-->
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <!-- /ko -->
+            <!-- ko if: $root.selectedLabels().includes('Stay') -->
+            <ul data-bind="foreach: stayListingResults">
+                <li>
+                    <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === $data.id }">
+                        <div class="col-xs-4 venue-image">
+                            <img data-bind="attr: {src: $data.photo}" src="" alt="venue image">
+                        </div>
+                        <div class="col-xs-8 venue-text">
+                            <!--click and clickBubble allow for the default click action on a link tag-->
+                            <h3><a data-bind="attr: {href: $data.url}, text: $data.title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
+                            <p data-bind="text: $data.address"></p>
+                            <p data-bind="text: $data.phone"></p>
+                            <!--<span>-->
+                            <!--<span data-bind="style: { width: rating * 16 + 'px' }"></span>-->
+                            <!--</span>-->
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <!-- /ko -->
         </div>
+
+
+
+
+
     </div>
     <!---End Drawer Section-->
-
     <footer class="row" id="footer">
         <div class="col-xs-12">
-            <p>
-                Powered by <a href="https://foursquare.com/" target="_blank">Foursquare</a>
-            </p>
+            <p>Powered by <a href="https://foursquare.com/" target="_blank">Foursquare</a></p>
         </div>
     </footer>
-
-    <!-- <img src="img/supermarket.png" alt=""> -->
-
+    <!---End Footer Section-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script> -->
     <script src="js/script.js"></script>
     <!-- Moved Google Maps API script tag below the custom code to make sure the callback function is declared before Maps API is loaded -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&libraries=places&callback=viewModel.initialize" async defer></script>
-
-
 </body>
 </html>
