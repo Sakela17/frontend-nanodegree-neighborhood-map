@@ -60,7 +60,8 @@ var mapData = {
 var fourSquareData = {
     cliend_id: 'EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY',
     client_key: 'TH55VNBSYPX3ZZOPAERLTEBLTQBDWUPUCISGTBRJH3JM3ZZG',
-    poiCategories: [{name: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
+    // poiCategories: [{name: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
+    poiCategories: [{name: 'shop', categoryId: '4d4b7105d754a06378d81259'}]
     // poiCategories: [{name: 'eat', categoryId: '4d4b7105d754a06374d81259'}, {name: 'shop', categoryId: '4d4b7105d754a06378d81259'}, {name: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
     // categoryFood: {name: 'eat', categoryId: 4d4b7105d754a06374d81259},
     // categoryShop: {name: 'shop', categoryId: 4d4b7105d754a06378d81259},
@@ -73,7 +74,8 @@ var viewModel = {
     initialize: function() {
         console.log('go');
         this.initMap();
-        // this.sendAjaxRequests();
+        // $.when(viewModel.sendAjaxRequests).done(function() { viewModel.stayListingResults.valueHasMutated(); console.log('deferred'); });
+        this.sendAjaxRequests();
     },
     initMap: function() {
         var mapProperties;
@@ -88,18 +90,22 @@ var viewModel = {
     // Send AJAX requests to Foursquare API for 3 POI categories
     // Called from initialize()
     sendAjaxRequests:  function() {
-        var obj,
-            fourSquare = fourSquareData;
-        console.log(fourSquare);
-        fourSquareData.poiCategories.forEach(function(poi) {
+        var self = this,
+            fourSquare = fourSquareData,
+            // Place holder for promises returned by getVenueDetails()
+            promises = [],
+            obj,
+            marker;
+        fourSquare.poiCategories.forEach(function(poi) {
             $.ajax({
-                url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.167697&radius=150&categoryId=' + poi.categoryId + '&client_id=' + fourSquareData.cliend_id + '&client_secret=' + fourSquareData.client_key + '&v=20131124',
+                url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.167697&radius=50&categoryId=' + poi.categoryId + '&client_id=' + fourSquare.cliend_id + '&client_secret=' + fourSquare.client_key + '&v=20131124',
                 dataType: 'json',
                 success: function(data) {
                     if (data.meta.code === 200) {
+                        console.log(data);
                         data.response.venues.forEach(function(venue) {
                             console.log('loop each venue in ' + poi.name + ' category');
-                            console.log(obj);
+                            // Create dummy object and use it to pass info to createMarker()
                             obj = {
                                 name: venue.name,
                                 id: venue.id,
@@ -112,38 +118,13 @@ var viewModel = {
                                 photo: '',
                                 rating: ''
                             };
-                            $.ajax({
-                                url: 'https://api.foursquare.com/v2/venues/' + obj.id + '?&client_id=' + fourSquareData.cliend_id + '&client_secret=' + fourSquareData.client_key + '&v=20131124',
-                                dataType: 'jsonp',
-                                success: function(data) {
-                                    var venueDetails = data.response.venue;
-                                    if (data.meta.code === 200) {
-                                        if (venueDetailsails.hasOwnProperty("rating")) {
-                                            obj.rating = venueDetails.rating / 2;
-                                            console.log('has rating');
-                                        }
-                                        if (venueDetails.hasOwnProperty("bestPhoto")) {
-                                            obj.photo = venueDetails.bestPhoto.prefix + '100x100' + venueDetails.bestPhoto.suffix;
-                                            console.log('has photo');
-                                        }
 
-                                    } else {
-                                        console.log("cannot load image for" + obj.name);
-                                    }
-                                },
-                                error: function() {
-                                    console.log("cannot load image for" + obj.name);
-                                },
-                                complete: function() {
-                                    console.log(obj);
-                                    viewModel.createMarker(obj, poi.name);
-
-                                    console.log('complete venue details request');
-
-                                }
-                            });
-
-                        })
+                            marker = viewModel.createMarker(obj, poi.name);
+                            // Call getVenueDetails() that makes .ajax() request to get details of photo and rating for each venue
+                            // Store promises returned from ajax getVenueDetails calls and pass them as an array of arguments
+                            // to $.Deferred.when()
+                            promises.push(viewModel.getVenueDetails(marker, fourSquare));
+                        });
                     } else {
                         viewModel.errorMsg(poi.name);
                     }
@@ -152,18 +133,30 @@ var viewModel = {
                     viewModel.errorMsg(poi.name);
                 },
                 complete: function(object, string) {
-                    console.log(object.responseText);
-                    console.log(string);
-                    if (string === 'success') { viewModel[poi.name + 'ListingResults'].valueHasMutated(); }
+                    // console.log(object.responseText);
+                    // if (string === 'success') { viewModel[poi.name + 'ListingResults'].valueHasMutated(); }
+                    $.when.apply(undefined, promises)
+                        .done(function() {
+                            var x;
+                            console.log(arguments);
+                            viewModel[poi.name + 'ListingResults'].valueHasMutated();
+                            // Show message in UI if at least one of the getVenueDetails() requests failed
+                            for (x in arguments) {
+                                var code = arguments[x][0].meta.code;
+                                if (code !== 200)
+                                    return $("#map-holder").append("<div id='fragment'><span style='cursor:pointer' id='close-span' onclick=$('#fragment').css('display','none')>x</span><p>Failed to load details for one or more venues. Please try again soon.</p></div>");
+                            }
+                        })
                 }
             });
         });
+        // $.when.apply(undefined, ajaxRequests).then(function() {console.log(ajaxRequests[0].state())}).done(function() { console.log(ajaxRequests[0].state)});
     },
     // Create Google Maps API markers in place of Foursquare API venues passed in array from sendAjaxRequests()
     createMarker: function(obj, poi) {
         var marker = new google.maps.Marker({
             map: mapData.map,
-            position: {lat: venue.lat, lng: venue.lng},
+            position: {lat: obj.lat, lng: obj.lng},
             title: obj.name,
             address: obj.address,
             phone: obj.phone,
@@ -203,44 +196,50 @@ var viewModel = {
         // Push marker to array associated with one of the POI categories
         mapData[poi + 'MarkersData'].push(marker);
         mapData.bounds.extend(marker.position);
+        return marker;
     },
+    getVenueDetails: function(obj, fs) {
+        // console.log(obj);
+        // console.log(poi);
+        return $.ajax({
+            url: 'https://api.foursquare.com/v2/venues/' + obj.id + '?&client_id=' + fs.cliend_id + '&client_secret=' + fs.client_key + '&v=20131124',
+            dataType: 'jsonp',
+            success: function(data) {
+                var venueDetails = data.response.venue;
+                if (data.meta.code === 200) {
+                    // var arr = mapData[poi + 'MarkersData'];
+                    console.log(obj);
+                    if (venueDetails.hasOwnProperty("rating")) {
+                        obj.rating = venueDetails.rating / 2;
+                        console.log('has rating');
+                    }
+                    if (venueDetails.hasOwnProperty("bestPhoto")) {
+                        obj.photo = venueDetails.bestPhoto.prefix + '100x100' + venueDetails.bestPhoto.suffix;
+                        console.log('has photo');
+                    }
+
+
+                } else {
+                    console.log("cannot load details for " + obj.name);
+                }
+            },
+            error: function() {
+                console.log("cannot load details for " + obj.name);
+            },
+            complete: function() {
+                console.log('complete venue details request');
+            }
+        });
+
+    },
+
     // Animate clicked marker and remove animation from previously selected marker
     animateMarker: function(marker, currMarker) {
         // This check is needed for the very first click when current marker is an empty object
         if (currMarker.hasOwnProperty('animation')) { currMarker.setAnimation(null); }
         marker.setAnimation(google.maps.Animation.BOUNCE);
     },
-    getVenueDetails: function(venue) {
-        $.ajax({
-            url: 'https://api.foursquare.com/v2/venues/' + venue.id + '?&client_id=EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY&client_secret=TH55VNBSYPX3ZZOPAERLTEBLTQBDWUPUCISGTBRJH3JM3ZZG&v=20131124',
-            dataType: 'jsonp',
-            success: function(data) {
-                if (data.meta.code === 200) {
-                    if (data.response.venue.hasOwnProperty("rating")) {
-                        venue.rating = data.response.venue.rating / 2;
-                        // viewModel.currentMarker.valueHasMutated();
-                        // viewModel.showRating(venue.rating);
-                        console.log(venue);
-                    } else {
-                        venue.rating = "";
-                    }
-                    if (data.response.venue.hasOwnProperty("bestPhoto")) {
-                        venue.photo = data.response.venue.bestPhoto.prefix + '100x100' + data.response.venue.bestPhoto.suffix;
-                        console.log('has photo');
-                        // viewModel.currentMarker.valueHasMutated();
-                    } else {
-                        venue.photo = "";
-                    }
 
-                } else {
-                    alert("Sorry, cannot load image for selected venue. Please try again soon.");
-                }
-            },
-            error: function() {
-                alert("Sorry, cannot load image for selected venue. Please try again soon.");
-            }
-        });
-    },
     // Add child node which image overlays the parent node's image to show rating (yellow stars)
     // Set image's width using venue's rating passed as a parameter
     showRating: function(r) {
