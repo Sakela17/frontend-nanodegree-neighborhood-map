@@ -20,7 +20,7 @@
     <!---End Header-->
     <nav class="row">
         <form class="col-xs-12 multiselect">
-            <!-- Click event toggles boolean observable -->
+            <!-- 'click' event to toggle boolean observable to hide/show #checkboxes -->
             <div id="selectBox" data-bind="event: { click: dropdownMenu.bind($root, !dropdownMenu()) }">
                 <select title="dropdown form control" data-bind="options: [fillOptions]"></select>
             </div>
@@ -48,15 +48,15 @@
             <ul data-bind="foreach: eatListingResults">
                 <li>
                     <!-- Currently clicked marker's id compared to each object in this category to toggle 'active-listing' on match -->
-                    <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === $data.id }">
+                    <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === id }">
                         <div class="col-xs-4 venue-image">
-                            <img data-bind="attr: {src: $data.photo}" src="" alt="venue image">
+                            <img data-bind="attr: {src: photo}" src="" alt="venue image">
                         </div>
                         <div class="col-xs-8 venue-text">
                             <!--click and clickBubble allow for the default click action on a link tag-->
-                            <h3><a data-bind="attr: {href: $data.url}, text: $data.title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
-                            <p data-bind="text: $data.address"></p>
-                            <p data-bind="text: $data.phone"></p>
+                            <h3><a data-bind="attr: {href: url}, text: title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
+                            <p data-bind="text: address"></p>
+                            <p data-bind="text: phone"></p>
                             <span class="stars"><span data-bind="style: { width: rating * 16 + 'px' }"></span></span>
                         </div>
                     </div>
@@ -67,15 +67,15 @@
             <ul data-bind="foreach: shopListingResults">
                 <li>
                     <!-- Currently clicked marker's id compared to each object in this category to toggle 'active-listing' on match -->
-                    <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === $data.id }">
+                    <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === id }">
                         <div class="col-xs-4 venue-image">
-                            <img data-bind="attr: {src: $data.photo}" src="" alt="venue image">
+                            <img data-bind="attr: {src: photo}" src="" alt="venue image">
                         </div>
                         <div class="col-xs-8 venue-text">
                             <!--click and clickBubble allow for the default click action on a link tag-->
-                            <h3><a data-bind="attr: {href: $data.url}, text: $data.title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
-                            <p data-bind="text: $data.address"></p>
-                            <p data-bind="text: $data.phone"></p>
+                            <h3><a data-bind="attr: {href: url}, text: title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
+                            <p data-bind="text: address"></p>
+                            <p data-bind="text: phone"></p>
                             <span class="stars"><span data-bind="style: { width: rating * 16 + 'px' }"></span></span>
                         </div>
                     </div>
@@ -86,15 +86,15 @@
             <ul data-bind="foreach: stayListingResults">
                 <li>
                     <!-- Currently clicked marker's id compared to each object in this category to toggle 'active-listing' on match -->
-                    <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === $data.id }">
+                    <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === id }">
                         <div class="col-xs-4 venue-image">
-                            <img data-bind="attr: {src: $data.photo}" src="" alt="venue image">
+                            <img data-bind="attr: {src: photo}" src="" alt="venue image">
                         </div>
                         <div class="col-xs-8 venue-text">
                             <!--click and clickBubble allow for the default click action on a link tag-->
-                            <h3><a data-bind="attr: {href: $data.url}, text: $data.title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
-                            <p data-bind="text: $data.address"></p>
-                            <p data-bind="text: $data.phone"></p>
+                            <h3><a data-bind="attr: {href: url}, text:title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
+                            <p data-bind="text: address"></p>
+                            <p data-bind="text: phone"></p>
                             <span class="stars"><span data-bind="style: { width: rating * 16 + 'px' }"></span></span>
                         </div>
                     </div>
@@ -114,6 +114,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/script.js"></script>
     <!-- Moved Google Maps API script tag below the custom code to make sure the callback function is declared before Maps API is loaded -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&libraries=places&callback=viewModel.init" onerror="mapErrorMsg()" async defer></script>
+    <script async defer onerror="mapErrorMsg()" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&libraries=places&callback=viewModel.init"></script>
 </body>
 </html>
+

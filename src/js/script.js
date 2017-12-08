@@ -1,66 +1,15 @@
 'use strict';
 
-$('#drawer').on('swipeup', handleSwipeUp);
-$('#drawer').on('swipedown', handleSwipeDown);
-
-function handleSwipeUp() {
-    alert("swiped up");
-}
-
-function handleSwipeDown() {
-    alert('swiped down');
-}
-
-
-
-// var touchstartX = 0;
-// var touchstartY = 0;
-// var touchendX = 0;
-// var touchendY = 0;
-
-// var gestureZone = document.getElementById('drawer');
-
-// gestureZone.addEventListener('touchstart', function(event) {
-//     touchstartX = event.screenX;
-//     touchstartY = event.screenY;
-// }, false);
-
-// gestureZone.addEventListener('touchend', function(event) {
-//     touchendX = event.screenX;
-//     touchendY = event.screenY;
-//     handleGesure();
-// }, false); 
-
-// function handleGesure() {
-//     var swiped = 'swiped: ';
-//     // if (touchendX < touchstartX) {
-//         // alert(swiped + 'left!');
-//     // }
-//     // if (touchendX > touchstartX) {
-//         // alert(swiped + 'right!');
-//     // }
-//     if (touchendY < touchstartY) {
-//         alert(swiped + 'down!');
-//     }
-//     if (touchendY > touchstartY) {
-//         alert(swiped + 'up!');
-//     }
-//     // if (touchendY == touchstartY) {
-//         // alert('tap!');
-//     // }
-// }
-
-
 /* Placeholder for FourSquare API parameters */
 var fourSquareData = {
     client_id: 'EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY',
     client_key: 'TH55VNBSYPX3ZZOPAERLTEBLTQBDWUPUCISGTBRJH3JM3ZZG',
-    poiCategories: [{categoryName: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
+    // poiCategories: [{categoryName: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
     // poiCategories: [{name: 'shop', categoryId: '4d4b7105d754a06378d81259'}]
-    // poiCategories: [
-    //     {name: 'eat', categoryId: '4d4b7105d754a06374d81259'},
-    //     {name: 'shop', categoryId: '4d4b7105d754a06378d81259'},
-    //     {name: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
+    poiCategories: [
+        {categoryName: 'eat', categoryId: '4d4b7105d754a06374d81259'},
+        {categoryName: 'shop', categoryId: '4d4b7105d754a06378d81259'},
+        {categoryName: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
 };
 
 /* Placeholder for Google Map API objects */
@@ -226,7 +175,7 @@ var viewModel = {
         });
         /* Push marker to an observable array associated with one of the POI categories */
         self[poi + 'ListingResults'].push(marker);
-        md.bounds.extend(this.position);  // extend bounds to include this marker
+        md.bounds.extend(marker.position);  // extend map bounds to include this marker
     },
     /*
      * Invoked from createMarker method
@@ -282,10 +231,10 @@ var viewModel = {
     selectedLabels: ko.observableArray(["Eat", "Shop", "Stay"]),
     fillOptions: ko.pureComputed(function() {
         var str = viewModel.selectedLabels()
-        .map(function(item) {
-            return item;
-        })
-        .join(", ");
+            .map(function(item) {
+                return item;
+            })
+            .join(", ");
         return str || "-- Select your POI --";
     }),
     // Handle checkbox' toggle events in drop down menu
@@ -330,14 +279,14 @@ viewModel.allSelected = ko.computed({
         var unSelectedLabels = [];
         if(value) {
             for (var i = 0; i < toggleLabels.length; i++) {
-              var key = toggleLabels[i];
-              if (selectedLabels.indexOf(key) === -1) {
-                unSelectedLabels.push(key);
-              }
+                var key = toggleLabels[i];
+                if (selectedLabels.indexOf(key) === -1) {
+                    unSelectedLabels.push(key);
+                }
             }
             unSelectedLabels.forEach(function(label) {
-                var markersData = label.toLowerCase() + "MarkersData";
-                mapData[markersData].forEach(function(marker) {
+                var markersData = label.toLowerCase() + "ListingResults";
+                viewModel[markersData]().forEach(function(marker) {
                     marker.setMap(mapData.map);
                 });
             });
@@ -345,9 +294,8 @@ viewModel.allSelected = ko.computed({
             mapData.map.fitBounds(mapData.bounds);
         } else {
             toggleLabels.forEach(function(label) {
-                console.log('all deselected');
-                var markersData = label.toLowerCase() + "MarkersData";
-                mapData[markersData].forEach(function(marker) {
+                var markersData = label.toLowerCase() + "ListingResults";
+                viewModel[markersData]().forEach(function(marker) {
                     marker.setMap(null);
                 });
             });
