@@ -1,3 +1,6 @@
+body {
+    height: 100%;
+}
 
 html,
 body,
@@ -6,7 +9,7 @@ h2,
 p {
     /*font-family: Arial, sans-serif;*/
     font-family: "Times New Roman", Times, serif;
-    height: 100%;
+    /*height: 100%;*/
     margin: 0;
     padding: 0;
     /*font-size: 16px;*/
@@ -177,10 +180,7 @@ header h2 {
 /*}*/
 
 .multiselect {
-    /*height: 100%;*/
-    /*z-index: 1;*/
     padding: 0;
-    /*text-shadow: 1px 1px 0 #fff;*/
 }
 
 #selectBox select {
@@ -192,17 +192,20 @@ header h2 {
     font-size: 1.2em;
     padding-left: 3%;
     height: 7vh;
+    width: 100%;
     position: relative;
     font-weight: 400;
 }
 
 select,
 #selectBox::after {
-    width: 100%;
-    height: 100%;
+    /*width: 100%;*/
+    /*height: 100%;*/
 }
 
 #selectBox::after {
+    height: 100%;
+    width: 100%;
     content: "";
     position: absolute;
     top: 0;
@@ -278,20 +281,24 @@ button {
 }
 
 #drawer {
-    /*width: 300px;*/
+    will-change: transform, scroll-position, contents;
+    width: 100%;
     height: 38vh;
     /*top: 0px;*/
-    position: relative;
+    position: absolute;
     background: #dcdcdc;
-    /*bottom: 30px;*/
+    bottom: -25vh;
     /*-webkit-transform: translate(-300px, 0);*/
     /*transform: translate(0, 300px);*/
     transition: transform 0.3s ease;
     /*width:162px;*/
     /*height: auto;*/
+    overflow: auto;
+    display: block;
 }
 
 #drawer.open {
+    /*will-change: transform, scroll-position;*/
     -webkit-transform: translate(0, -30vh);
     -ms-transform: translate(0, -30vh);
     transform: translate(0, -30vh);
@@ -405,7 +412,7 @@ li {
 
 
 /* use sprite image for background. Initially is set to show grey stars */
-#stars, #stars > span {
+.stars, .stars > span {
     display: inline-block;
     background: url(../img/stars.png) 0 -16px repeat-x;
     width: 80px;
@@ -413,7 +420,7 @@ li {
 }
 
 /* set backgournd image to make yellow stars visible */
-#stars > span {
+.stars > span {
     /*max-width:80px;*/
     background-position: 0 0;
 }
@@ -487,7 +494,7 @@ footer a, footer a:visited, footer a:hover {
     #drawer, #drawer.open {
         position: absolute;
         top: 15vh;
-        height: 83vh;
+        height: 80vh;
         width: 25vw;
         border: 1px solid rgba( 0, 0, 0, 0.2 );
         -webkit-transform: none;
@@ -495,6 +502,7 @@ footer a, footer a:visited, footer a:hover {
         -ms-transform: none;
         -o-transform: none;
         transform: none;
+        overflow-y: hidden;
     }
 
     #venue-details {
@@ -502,4 +510,3 @@ footer a, footer a:visited, footer a:hover {
     }
 
 }
-

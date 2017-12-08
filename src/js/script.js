@@ -1,3 +1,5 @@
+'use strict';
+
 $('#drawer').on('swipeup', handleSwipeUp);
 $('#drawer').on('swipedown', handleSwipeDown);
 
@@ -48,220 +50,212 @@ function handleSwipeDown() {
 //     // }
 // }
 
-var mapData = {
-    map: null,
-    infoWindow: null,
-    bounds: null,
-    eatMarkersData: [],
-    shopMarkersData: [],
-    stayMarkersData: []
-};
 
+/* Placeholder for FourSquare API parameters */
 var fourSquareData = {
-    cliend_id: 'EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY',
+    client_id: 'EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY',
     client_key: 'TH55VNBSYPX3ZZOPAERLTEBLTQBDWUPUCISGTBRJH3JM3ZZG',
-    // poiCategories: [{name: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
-    poiCategories: [{name: 'shop', categoryId: '4d4b7105d754a06378d81259'}]
-    // poiCategories: [{name: 'eat', categoryId: '4d4b7105d754a06374d81259'}, {name: 'shop', categoryId: '4d4b7105d754a06378d81259'}, {name: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
-    // categoryFood: {name: 'eat', categoryId: 4d4b7105d754a06374d81259},
-    // categoryShop: {name: 'shop', categoryId: 4d4b7105d754a06378d81259},
-    // categoryHotel: {name: 'stay', categoryId: 4bf58dd8d48988d1fa931735}
-
+    poiCategories: [{categoryName: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
+    // poiCategories: [{name: 'shop', categoryId: '4d4b7105d754a06378d81259'}]
+    // poiCategories: [
+    //     {name: 'eat', categoryId: '4d4b7105d754a06374d81259'},
+    //     {name: 'shop', categoryId: '4d4b7105d754a06378d81259'},
+    //     {name: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
 };
 
+/* Placeholder for Google Map API objects */
+var mapData = {
+    mapProp: {
+        center: {lat: 41.380923, lng: 2.16769}, /* Coordinates of Ciutat Vella (core of Barcelona's downtown) */
+        zoom: 17},
+    map: null,
+    infowindow: null,
+    bounds: null
+};
 
+/* Methods and properties to convert data and control UI */
 var viewModel = {
-    initialize: function() {
-        console.log('go');
+    /*
+     * Invoked from Google Maps API script in index.html
+     * Execute initMap() and sendAjaxRequests()
+     */
+    init: function() {
         this.initMap();
-        // $.when(viewModel.sendAjaxRequests).done(function() { viewModel.stayListingResults.valueHasMutated(); console.log('deferred'); });
         this.sendAjaxRequests();
     },
+    /*
+     * Invoked from init method
+     * Create Google map. Store map instances in mapData object
+     */
     initMap: function() {
-        var mapProperties;
-        mapData.bounds = new google.maps.LatLngBounds();
-        mapProperties = {
-            center: new google.maps.LatLng(41.380923, 2.167697),
-            zoom: 17
-        };
-        mapData.map = new google.maps.Map(document.getElementById('map'), mapProperties);
-        mapData.infoWindow = new google.maps.InfoWindow();
+        var md = mapData;
+        md.bounds = new google.maps.LatLngBounds();
+        md.map = new google.maps.Map(document.getElementById('map'), md.mapProp);
+        md.infowindow = new google.maps.InfoWindow();
     },
-    // Send AJAX requests to Foursquare API for 3 POI categories
-    // Called from initialize()
+    /*
+     * Invoked form init method
+     * Send AJAX requests to Foursquare API for categories listed in fourSquareData.poiCategories array
+     */
     sendAjaxRequests:  function() {
         var self = this,
-            fourSquare = fourSquareData,
-            // Place holder for promises returned by getVenueDetails()
-            promises = [],
-            obj,
-            marker;
-        fourSquare.poiCategories.forEach(function(poi) {
+            fs = fourSquareData,
+            venueObj;
+        /* Get venues within 150 meters of Ciutat Vella (lat: 41.380923, lng: 2.16769) for each POI category */
+        fs.poiCategories.forEach(function(poi) {
             $.ajax({
-                url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.167697&radius=50&categoryId=' + poi.categoryId + '&client_id=' + fourSquare.cliend_id + '&client_secret=' + fourSquare.client_key + '&v=20131124',
+                url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.16769&radius=150&categoryId=' + poi.categoryId + '&client_id=' + fs.client_id + '&client_secret=' + fs.client_key + '&v=20131124',
                 dataType: 'json',
                 success: function(data) {
-                    if (data.meta.code === 200) {
-                        console.log(data);
-                        data.response.venues.forEach(function(venue) {
-                            console.log('loop each venue in ' + poi.name + ' category');
-                            // Create dummy object and use it to pass info to createMarker()
-                            obj = {
-                                name: venue.name,
-                                id: venue.id,
-                                lat: venue.location.lat,
-                                lng: venue.location.lng,
-                                address: venue.location.formattedAddress[0],
-                                phone: venue.contact.phone,
-                                url: 'https://foursquare.com/v/' + venue.id,
-                                icon: 'img/' + poi.name + '.png',
-                                photo: '',
-                                rating: ''
-                            };
-
-                            marker = viewModel.createMarker(obj, poi.name);
-                            // Call getVenueDetails() that makes .ajax() request to get details of photo and rating for each venue
-                            // Store promises returned from ajax getVenueDetails calls and pass them as an array of arguments
-                            // to $.Deferred.when()
-                            promises.push(viewModel.getVenueDetails(marker, fourSquare));
-                        });
-                    } else {
-                        viewModel.errorMsg(poi.name);
-                    }
+                    data.response.venues.forEach(function(venue) {
+                        // Initialize placeholder object to store venue properties
+                        venueObj = {
+                            name: venue.name,
+                            id: venue.id,
+                            lat: venue.location.lat,
+                            lng: venue.location.lng,
+                            address: venue.location.formattedAddress[0],
+                            phone: venue.contact.phone,
+                            url: 'https://foursquare.com/v/' + venue.id,
+                            icon: 'img/' + poi.categoryName + '.png',
+                            photo: '',
+                            rating: ''
+                        };
+                        /* Pass placeholder object and name of POI category to getVenueDetails call */
+                        self.getVenueDetails(venueObj, poi.categoryName);
+                    });
                 },
                 error: function() {
-                    viewModel.errorMsg(poi.name);
+                    self.errorMsg(poi.categoryName);
                 },
-                complete: function(object, string) {
-                    // console.log(object.responseText);
-                    // if (string === 'success') { viewModel[poi.name + 'ListingResults'].valueHasMutated(); }
-                    $.when.apply(undefined, promises)
-                        .done(function() {
-                            var x;
-                            console.log(arguments);
-                            viewModel[poi.name + 'ListingResults'].valueHasMutated();
-                            // Show message in UI if at least one of the getVenueDetails() requests failed
-                            for (x in arguments) {
-                                var code = arguments[x][0].meta.code;
-                                if (code !== 200)
-                                    return $("#map-holder").append("<div id='fragment'><span style='cursor:pointer' id='close-span' onclick=$('#fragment').css('display','none')>x</span><p>Failed to load details for one or more venues. Please try again soon.</p></div>");
-                            }
-                        })
+                complete: function(obj, string) {
+                    // console.log(string);
+                    // if (string === 'success') { viewModel[poi.categoryName + 'ListingResults'].valueHasMutated(); }
                 }
             });
         });
-        // $.when.apply(undefined, ajaxRequests).then(function() {console.log(ajaxRequests[0].state())}).done(function() { console.log(ajaxRequests[0].state)});
     },
-    // Create Google Maps API markers in place of Foursquare API venues passed in array from sendAjaxRequests()
-    createMarker: function(obj, poi) {
-        var marker = new google.maps.Marker({
-            map: mapData.map,
-            position: {lat: obj.lat, lng: obj.lng},
-            title: obj.name,
-            address: obj.address,
-            phone: obj.phone,
-            icon: obj.icon,
-            photo: obj.photo,
-            rating: obj.rating,
-            animation: google.maps.Animation.DROP,
-            id: obj.id,
-            url: obj.url
-        });
-        // Create a click event listener to open infoWindow with a name of the place at each marker
-        // Set clicked marker as current marker
-        // Handle animation and drawer position
-        // Send request to get image and rating for the clicked marker
-        marker.addListener('click', function() {
-            var drawer = $('#drawer');
-            var currMarker = viewModel.currentMarker();
-            mapData.infoWindow.setContent(this.title);
-            mapData.infoWindow.open(mapData.map, this);
-            // Close dropdown menu if open
-            if (viewModel.dropdownMenu()) { viewModel.dropdownMenu(false) }
-            // If different marker is clicked, animate it and pass it to current marker observable
-
-            // Run getVenueDetails() to get image and rating for the clicked marker
-            if (this !== currMarker) {
-                viewModel.animateMarker(this, currMarker);
-                viewModel.currentMarker(this);
-                // Bring focus to venue on list view
-                $('.active-listing').focus();
-
-                if (!drawer.hasClass("open")) { drawer.addClass("open"); }
-                // Toggle drawer when the same marker is clicked
-            } else {
-                drawer.toggleClass("open");
-            }
-        });
-        // Push marker to array associated with one of the POI categories
-        mapData[poi + 'MarkersData'].push(marker);
-        mapData.bounds.extend(marker.position);
-        return marker;
-    },
-    getVenueDetails: function(obj, fs) {
-        // console.log(obj);
-        // console.log(poi);
-        return $.ajax({
-            url: 'https://api.foursquare.com/v2/venues/' + obj.id + '?&client_id=' + fs.cliend_id + '&client_secret=' + fs.client_key + '&v=20131124',
+    /*
+     * Invoked from sendAjaxRequests method
+     * Send AJAX request to Foursquare API to get details for specific venue
+     * Get 'photo' and 'rating' property values, set properties
+     * Call createMarker method upon complete
+     */
+    getVenueDetails: function(venue, poi) {
+        var fs = fourSquareData,
+            venueDetails;
+        $.ajax({
+            url: 'https://api.foursquare.com/v2/venues/' + venue.id + '?&client_id=' + fs.client_id + '&client_secret=' + fs.client_key + '&v=20131124',
             dataType: 'jsonp',
             success: function(data) {
-                var venueDetails = data.response.venue;
-                if (data.meta.code === 200) {
-                    // var arr = mapData[poi + 'MarkersData'];
-                    console.log(obj);
-                    if (venueDetails.hasOwnProperty("rating")) {
-                        obj.rating = venueDetails.rating / 2;
-                        console.log('has rating');
-                    }
-                    if (venueDetails.hasOwnProperty("bestPhoto")) {
-                        obj.photo = venueDetails.bestPhoto.prefix + '100x100' + venueDetails.bestPhoto.suffix;
-                        console.log('has photo');
-                    }
-
-
-                } else {
-                    console.log("cannot load details for " + obj.name);
+                venueDetails = data.response.venue;
+                if (venueDetails.hasOwnProperty("rating")) {
+                    venue.rating = venueDetails.rating / 2;  // convert to 5-point rating and set property
+                }
+                if (venueDetails.hasOwnProperty("bestPhoto")) {
+                    venue.photo = venueDetails.bestPhoto.prefix + '100x100' + venueDetails.bestPhoto.suffix;  // assemble photo URL and set property
                 }
             },
             error: function() {
-                console.log("cannot load details for " + obj.name);
+                console.log("Cannot load details for " + venue.name);
             },
             complete: function() {
-                console.log('complete venue details request');
+                viewModel.createMarker(venue, poi);
             }
         });
-
     },
-
-    // Animate clicked marker and remove animation from previously selected marker
+    /*
+     * Invoked from getVenueDetails method
+     * Create Google Maps API marker
+     * Add event listener on click
+     * Push marker to an observable array
+     */
+    createMarker: function(venue, poi) {
+        var self = this,
+            md = mapData,
+            currMarker,
+            drawer = $('#drawer'),
+            marker;
+        /*
+         * Set specific properties with venue details obtained from FourSquare API
+         * Add marker to the map
+         */
+        marker = new google.maps.Marker({
+            map: md.map,
+            position: {lat: venue.lat, lng: venue.lng},
+            title: venue.name,
+            address: venue.address,
+            phone: venue.phone,
+            icon: venue.icon,
+            photo: venue.photo,
+            rating: venue.rating,
+            animation: google.maps.Animation.DROP,
+            id: venue.id,
+            url: venue.url
+        });
+        /*
+         * Add event listener to bring up infoWindow on click
+         * Set clicked marker as currentMarker observable
+         * Handle animation and #drawer position
+         */
+        marker.addListener('click', function() {
+            currMarker = self.currentMarker();
+            if (self.dropdownMenu()) { viewModel.dropdownMenu(false) }  // hide checkboxes if previously opened
+            if (this !== currMarker) {  // check if new marker is clicked
+                md.infowindow.open(md.map, this);  // make info window visible
+                md.infowindow.setContent(this.title);  // display venue name in the info window
+                self.animateMarker(this, currMarker);  // handle animation
+                self.currentMarker(this);  // set clicked marker as currentMarker observable
+                /* Toggle #drawer (ListingResults) tab */
+                if (!drawer.hasClass('open')) {
+                    drawer.addClass('open');
+                }
+                /* Set vertical position of scroll bar to show selected marker at the top of #venue-details container */
+                var venDetEl = $('#venue-details');
+                venDetEl.scrollTop(venDetEl.scrollTop() + ($('.active-listing').offset().top - venDetEl.offset().top));
+            } else {
+                /* Toggle #drawer (Listing Results) tab */
+                drawer.toggleClass("open");
+                /* Toggle animation when the same marker is clicked */
+                // if (this.getAnimation() !== null) {
+                //     this.setAnimation(null);
+                // } else {
+                //     this.setAnimation(google.maps.Animation.BOUNCE);
+                // }
+            }
+        });
+        /* Push marker to an observable array associated with one of the POI categories */
+        self[poi + 'ListingResults'].push(marker);
+        md.bounds.extend(this.position);  // extend bounds to include this marker
+    },
+    /*
+     * Invoked from createMarker method
+     * Animate clicked marker and remove animation from previously selected marker
+     */
     animateMarker: function(marker, currMarker) {
-        // This check is needed for the very first click when current marker is an empty object
+        /* This check is needed for the very first click when current marker is an empty object */
         if (currMarker.hasOwnProperty('animation')) { currMarker.setAnimation(null); }
         marker.setAnimation(google.maps.Animation.BOUNCE);
     },
-
-    // Add child node which image overlays the parent node's image to show rating (yellow stars)
-    // Set image's width using venue's rating passed as a parameter
-    showRating: function(r) {
-        console.log($('#stars'));
-        $('#stars').html($('<span/>').width(r*16));
-    },
+    /* Set KO visible binding to hide/show #checkboxes element */
     dropdownMenu: ko.observable(false),
-    // Show/hide dropdown menu with checkboxes
-    toggleDropdown: function() {
-        this.dropdownMenu(!this.dropdownMenu());
-    },
-    // Handle position of the #drawer element
+    /* Set KO binding for 'click' event to hide/show #drawer element */
     toggleDrawer: function() {
         var drawer = $('#drawer');
         drawer.toggleClass("open");
     },
-    currentProfit: ko.observable(150000),
+    /*
+     * Set KO observable for clicked marker
+     * Marker's id used to identify object in 'Listing Results' container to toggle 'active-listing'  */
     currentMarker: ko.observable({}),
-    eatListingResults: ko.observableArray(mapData.eatMarkersData),
-    shopListingResults: ko.observableArray(mapData.shopMarkersData),
-    stayListingResults: ko.observableArray(mapData.stayMarkersData),
-    //
+    /*
+     * Set KO observable arrays to hold Marker objects
+     * Specific marker's object properties bound to the elements in 'Listing Results' container
+     */
+    eatListingResults: ko.observableArray([]),
+    shopListingResults: ko.observableArray([]),
+    stayListingResults: ko.observableArray([]),
+    /* Set KO binding for 'click' event */
     handleMarker: function(vm, e) {
         var context = ko.contextFor(e.target);
         var marker = context.$data;
@@ -271,10 +265,12 @@ var viewModel = {
         $(parentElem).toggleClass("active-listing");
         console.log($(parentElem));
 
-        // console.log(ko.contextFor(e.target));
-        // console.log(context.$data);
+        // If new marker is clicked
         if (marker !== currMarker) {
             vm.animateMarker(marker, currMarker);
+            mapData.infowindow.setContent(marker.title);
+            mapData.infowindow.open(mapData.map, marker);
+
         }
 
         // console.log(vm.currentMarker());
@@ -292,31 +288,36 @@ var viewModel = {
         .join(", ");
         return str || "-- Select your POI --";
     }),
-    // Handle checkbox click events for 'Eat', 'Shop', and 'Stay' labels
+    // Handle checkbox' toggle events in drop down menu
     toggleMarkers:  function(labelName){
-        // Store reference to array of markers from mapData that matches clicked label
-        var markersData = mapData[labelName.toLowerCase() + "MarkersData"];
-        // Check if clicked label was previously selected. Show/hide markers
-        if (viewModel.selectedLabels().includes(labelName)) {
-            markersData.forEach(function(marker) {
-                marker.setMap(mapData.map);
-            });
-            mapData.map.fitBounds(mapData.bounds);
-        } else {
-            markersData.forEach(function(marker) {
-                marker.setMap(null);
-            });
-
-            // Set currentMarker observable to null if its value matches an object from the hidden array of markers
-            if (markersData.includes(viewModel.currentMarker())) {
-                console.log('hello');
-                viewModel.currentMarker(null);
+        var vm = viewModel,
+            currMarker = vm.currentMarker,
+            // Get array of markers associated with (un)checked label
+            markersData = vm[labelName.toLowerCase() + "ListingResults"]();
+        // Show markers associated with checked label
+        if (vm.selectedLabels().includes(labelName)) {
+            markersData.forEach(function(marker) { marker.setMap(mapData.map); });
+            mapData.map.fitBounds(mapData.bounds);}
+        // Hide markers associated with unchecked label
+        else {
+            // Set currentMarker to an empty object if it's included in array of to-be-hidden markers
+            // Close infoWindow (if open)
+            if (markersData.includes(currMarker())) {
+                currMarker({});
+                mapData.infowindow.close();
             }
+            markersData.forEach(function(marker) { marker.setMap(null); });
         }
     },
+    // Error message for ajax() calls in sendAjaxRequests()
     errorMsg: function(label) {
-        $("#map-holder").append("<div id='fragment'><span style='cursor:pointer' id='close-span' onclick=$('#fragment').css('display','none')>x</span><p>Failed to load resources. Please try again soon.</p></div>");
+        $("#map-holder").append("<div id='fragment'><span style='cursor:pointer' id='close-span' onclick=$('#fragment').css('display','none')>x</span><p>Failed to load resources for category " + label.italics() + ". Please try again soon.</p></div>");
         $("#" + label).append("<strong> - failed to load</strong>");
+    },
+    // Error Handling for Google Maps API script
+    mapErrorMsg: function(){
+        $("#map-holder").append("<div id='fragment'><span style='cursor:pointer' id='close-span' onclick=$('#fragment').css('display','none')>x</span><p>Failed to load Google Maps." + "\n" + "Please try again soon.</p></div>");
+        return true;
     }
 };
 viewModel.allSelected = ko.computed({
@@ -358,3 +359,7 @@ viewModel.allSelected = ko.computed({
 
 ko.applyBindings(viewModel);
 
+// Set view port of the map to fit the given bounds on browser window resize
+$(window).resize(function() {
+    mapData.map.fitBounds(mapData.bounds);
+});
