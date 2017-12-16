@@ -1,0 +1,27 @@
+{
+  "name": "frontend-nanodegree-neighborhood-map",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sakela17/frontend-nanodegree-neighborhood-map.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sakela17/frontend-nanodegree-neighborhood-map/issues"
+  },
+  "homepage": "https://github.com/Sakela17/frontend-nanodegree-neighborhood-map#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.9.0",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-image": "^4.1.0",
+    "gulp-uglify": "^3.0.0",
+    "gulp-uglify-es": "^0.1.9"
+  }
+}

@@ -17,9 +17,9 @@ Then obtained data is used to display the Google Maps markers on the map and the
 The dropdown menu features multi-select filter that will hide/display the map markers and the venue details on the list view to match the selection.
 By clicking on a map marker, the marker gets animated, the name of the location is displayed in the ```infoWindow```, and additional information highlighted in the list view.
 The similar functionality is applied to the venue details on the list view.
-
 As per Foursquare attribution policy, I have included links back to the corresponding Foursquare venue pages. They are anchored to the names of the locations on the list view.
 And finally, to make this app responsive, I used [Bootstrap's](https://getbootstrap.com/) grid system along with the CSS media queries.
+
 *Note: some time throughout the process I noticed that the markers are not placed exactly above its location on the Google Maps. Further digging revealed that the lat/lng properties of the venues from the FourSquare API database DO NOT match the lat/lng properties of the same places in Google Maps.
 Since I take lat/lng properties from the Foursquare API to create markers, hence the difference in the data presentation.*
 
@@ -57,7 +57,7 @@ To play with the code, you need:
 ## Sources:
 * Google Maps JavaScript API [tutorials](https://developers.google.com/maps/documentation/javascript/);
 * Foursquare developers [documentation](https://developer.foursquare.com/docs) for the API;
-* Knockout [documentaion}(http://knockoutjs.com/documentation/introduction.html);
+* Knockout [documentaion](http://knockoutjs.com/documentation/introduction.html);
 * Stackoverflow [post](https://stackoverflow.com/questions/1987524/turn-a-number-into-star-rating-display-using-jquery-and-css) on how to use a sprite technique to show 'star' rating;
 * Stackoverflow [post](https://stackoverflow.com/questions/17714705/how-to-use-checkbox-inside-select-option/29573171) on how to create dropdown with checkboxes;
 * [Post](http://www.hedonisticlearning.com/posts/the-mistake-everyone-makes-with-knockoutjs.html) from [Hedonistic Learning](http://www.hedonisticlearning.com/) on how to create Knockout binding for multi-select menu;
