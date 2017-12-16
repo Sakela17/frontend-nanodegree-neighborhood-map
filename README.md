@@ -1,13 +1,13 @@
 # Neighborhood Map
 This is one of the projects for the Front-End Web Developer Nanodegree program at [Udacity](https://www.udacity.com/course/front-end-web-developer-nanodegree--nd001).
 Starting with a blank slate, I had to develop a single-page application using third-party libraries and APIs.
-The requirements for the application were to feature:
-* a full-screen map of a neighborhood (I would like to visit) using the [Google Maps API] (https://developers.google.com/maps/documentation/javascript/);
+The application has to feature:
+* a full-screen map of a neighborhood (I would like to visit) using the [Google Maps API](https://developers.google.com/maps/documentation/javascript/);
 * at least 5 markers on the map of the locations that I'm interested in within the neighborhood;
 * a list view of the locations;
 * a filter option (text input or a dropdown menu) to filter both the list view and the markers on the map;
 * a functionality that would provide more info for the locations using additional third-party APIs;
-* responsive interface utilizing [Knockout] (http://knockoutjs.com/) js framework.
+* responsive interface utilizing [Knockout](http://knockoutjs.com/) js framework.
 
 ## Project Details
 For this project I chose to work with a map featuring places within 150 meters of Cuitat Vella which is the core of the downtown Barcelona, Spain.
@@ -20,7 +20,7 @@ The similar functionality is applied to the venue details on the list view.
 As per Foursquare attribution policy, I have included links back to the corresponding Foursquare venue pages. They are anchored to the names of the locations on the list view.
 And finally, to make this app responsive, I used [Bootstrap's](https://getbootstrap.com/) grid system along with the CSS media queries.
 
-*Note: some time throughout the process I noticed that the markers are not placed exactly above its location on the Google Maps. Further digging revealed that the lat/lng properties of the venues from the FourSquare API database DO NOT match the lat/lng properties of the same places in Google Maps.
+*Note: some time throughout the process I noticed that the markers are not placed exactly above their locations on the Google Maps. Further digging revealed that the lat/lng properties of the venues from the FourSquare API database DO NOT match the lat/lng properties of the same places in Google Maps.
 Since I take lat/lng properties from the Foursquare API to create markers, hence the difference in the data presentation.*
 
 ## Quick Start
