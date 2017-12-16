@@ -43,13 +43,19 @@ header h2 {
     font-weight: 400;
 }
 
-#selectBox::after {
-    height: 100%;
-    width: 100%;
-    content: "";
-    position: absolute;
-    top: 0;
+option {
+    /*visibility: hidden;*/
+    display: none;
+
 }
+
+/*#selectBox::after {*/
+    /*height: 100%;*/
+    /*width: 100%;*/
+    /*content: "";*/
+    /*position: absolute;*/
+    /*top: 0;*/
+/*}*/
 
 #checkboxes {
     position: absolute;
@@ -237,14 +243,14 @@ footer p {
 }
 
 /****** ERROR *****/
-#fragment {
+#hidden-msg {
+    display: none;
     position: absolute;
     font-size: 1.2em;
     text-align: center;
     height: auto;
     border: 1px solid #ccc;
     border-radius: 10px;
-    display: none;
     padding: 25px;
     background-color: white;
     top: 15vh;
@@ -259,6 +265,7 @@ footer p {
     top: 0;
     right: 0;
     vertical-align: middle;
+    cursor: pointer;
 }
 
 /****** MEDIA QUERIES ******/

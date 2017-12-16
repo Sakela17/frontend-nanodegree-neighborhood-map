@@ -51,7 +51,7 @@ var viewModel = {
         /* Gets venues within 150 meters of Ciutat Vella (lat: 41.380923, lng: 2.16769) for each POI category */
         fs.poiCategories.forEach(function(poi) {
             $.ajax({
-                url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.16769&radius=150&categoryId=' + poi.categoryId + '&client_id=' + fs.client_id + '&client_secret=' + fs.client_key + '&v=20131124',
+                url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.16769&radius=50&categoryId=' + poi.categoryId + '&client_id=' + fs.client_id + '&client_secret=' + fs.client_key + '&v=20131124',
                 dataType: 'json',
                 success: function(data) {
                     data.response.venues.forEach(function(venue) {
@@ -64,6 +64,7 @@ var viewModel = {
                             address: venue.location.formattedAddress[0],
                             phone: venue.contact.phone,
                             url: 'https://foursquare.com/v/' + venue.id,
+                            // url: 'https://foursquare.com/v/' + venue.id + '?ref=' + fs.client_id, /* need to test with the client ID now */
                             icon: 'img/' + poi.categoryName + '.png',
                             photo: '',
                             rating: ''
@@ -209,7 +210,7 @@ var viewModel = {
     categories: ["Eat", "Shop", "Stay"],
     /* Sets array of parameters for KO 'checked' binding  */
     selectedValues: ko.observableArray(["Eat", "Shop", "Stay"]),  // initially selects all 3 categories
-    /* Populates values into KO 'options' control */
+    /* Computes value used for KO 'options' control */
     fillOptions: ko.pureComputed(function() {
         var str = viewModel.selectedValues()
             .map(function(item) {
@@ -246,12 +247,12 @@ var viewModel = {
      * Shows error message in HTML for failed ajax() calls
      */
     errorMsg: function(label) {
-        const fragment = $('#fragment');
-        fragment.css('display','block');
-        fragment.append("<p>Failed to load resources for category " + label.italics() + "." + "<br/>" + "Please try again soon.</p>");
+        const hidden_msg = $('#hidden-msg');
+        hidden_msg.css('display','block');
+        hidden_msg.append("<p>Failed to load resources for category " + label.italics() + "." + "<br/>" + "Please try again soon.</p>");
         $("#" + label).append("<strong> - failed to load</strong>");
         $('#close-span').click(function() {
-            fragment.css('display','none')
+            hidden_msg.css('display','none')
         });
     },
     /*
@@ -259,9 +260,12 @@ var viewModel = {
      * Shows error message for Google Maps API script
      */
     mapErrorMsg: function(){
-        const fragment = $('#fragment');
-        fragment.css('display','block');
-        fragment.append("<p>Failed to load Google Maps." + "<br/>" + "Please try again soon.</p>");
+        const hidden_msg = $('#hidden-msg');
+        hidden_msg.css('display','block');
+        hidden_msg.append("<p>Failed to load Google Maps." + "<br/>" + "Please try again soon.</p>");
+        $('#close-span').click(function() {
+            hidden_msg.css('display','none')
+        });
     }
 };
 

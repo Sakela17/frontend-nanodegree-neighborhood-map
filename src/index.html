@@ -24,7 +24,7 @@
             <div id="selectBox" data-bind="event: { click: dropdownMenu.bind($root, !dropdownMenu()) }">
                 <select title="dropdown form control" data-bind="options: [fillOptions]"></select>
             </div>
-            <div style="display: none" id="checkboxes" class="options" data-bind="visible: dropdownMenu">
+            <div style="display:none" id="checkboxes" class="options" data-bind="visible: dropdownMenu">
                 <label>
                     <input type="checkbox" value="all" data-bind="checked: allSelected"/>All
                 </label>
@@ -39,7 +39,7 @@
     <!---End Nav-->
     <div class="row" id="map-holder">
         <div id="map"></div>
-        <div id="fragment"><span style='cursor:pointer' id='close-span'>x</span></div>
+        <div id="hidden-msg"><span id='close-span'>x</span></div>
     </div>
     <!---End Map Section-->
     <div class="row" id="drawer" data-bind="click: toggleDrawer">

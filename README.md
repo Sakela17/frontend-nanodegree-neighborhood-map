@@ -11,15 +11,17 @@ The requirements for the application were to feature:
 
 ## Project Details
 For this project I chose to work with a map featuring places within 150 meters of Cuitat Vella which is the core of the downtown Barcelona, Spain.
-I have included 3 major categories for a user to pick from: Eat, Shop, and Stay. Each category can consist of up to 30 venues.
+I have included 3 major categories for a user to pick from: Eat, Shop, and Stay. Each category can store up to 30 venues.
 On the page load, the specific details of the venues are queried from the [Foursquare API](https://developer.foursquare.com/).
 Then obtained data is used to display the Google Maps markers on the map and the details of the venues on the Listing Results view.
 The dropdown menu features multi-select filter that will hide/display the map markers and the venue details on the list view to match the selection.
 By clicking on a map marker, the marker gets animated, the name of the location is displayed in the ```infoWindow```, and additional information highlighted in the list view.
 The similar functionality is applied to the venue details on the list view.
-To make this app responsive, I used [Bootstrap's](https://getbootstrap.com/) grid system along with the CSS media queries.
+
+As per Foursquare attribution policy, I have included links back to the corresponding Foursquare venue pages. They are anchored to the names of the locations on the list view.
+And finally, to make this app responsive, I used [Bootstrap's](https://getbootstrap.com/) grid system along with the CSS media queries.
 *Note: some time throughout the process I noticed that the markers are not placed exactly above its location on the Google Maps. Further digging revealed that the lat/lng properties of the venues from the FourSquare API database DO NOT match the lat/lng properties of the same places in Google Maps.
-Since I was using lat/lng properties from the Foursquare API to create markers, hence the difference in the data presentation.*
+Since I take lat/lng properties from the Foursquare API to create markers, hence the difference in the data presentation.*
 
 ## Quick Start
 To test working (production) version of the project on the Internet or to inspect the site on your phone, you need:
