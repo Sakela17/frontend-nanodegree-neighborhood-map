@@ -44,9 +44,7 @@ header h2 {
 }
 
 option {
-    /*visibility: hidden;*/
     display: none;
-
 }
 
 /*#selectBox::after {*/
