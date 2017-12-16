@@ -1,39 +1,16 @@
-body {
-    height: 100%;
-}
-
 html,
-body,
-h3,
-h2,
-p {
+body {
     font-family: "Times New Roman", Times, serif;
     margin: 0;
     padding: 0;
-    overflow-y: hidden;
-}
-
-h2 {
-    font-size: 1.5em;
-    margin: 0;
-}
-
-#map-holder {
-    background: #f5f5f5;
-    height: 72vh;
-    position: relative;
-}
-
-#map {
     height: 100%;
     overflow: hidden;
 }
 
+/****** HEADER ******/
 header {
-    margin: 0;
     height: 8vh;
     position: relative;
-    font-family: "Times New Roman", Times, serif;
     font-style: oblique;
     background: #232323;
 }
@@ -41,10 +18,13 @@ header {
 header h2 {
     text-shadow: -2px -2px white, 1px 1px #333;
     text-align: center;
+    font-size: 1.5em;
     line-height: 8vh;
+    margin: 0;
     padding: 0 3% 0 3%;
 }
 
+/****** NAV ******/
 .multiselect {
     padding: 0;
 }
@@ -59,7 +39,7 @@ header h2 {
     padding-left: 3%;
     height: 7vh;
     width: 100%;
-    position: relative;
+    /*position: relative;*/
     font-weight: 400;
 }
 
@@ -69,17 +49,14 @@ header h2 {
     content: "";
     position: absolute;
     top: 0;
-    background: rgba(0,0,0,0);
-    display: block;
 }
 
 #checkboxes {
     position: absolute;
-    border: 1px #dadada solid;
+    /*border: 1px #dadada solid;*/
     opacity: 1;
     background: rgb(246,246,246);
     border-radius: 0 0 10px 10px;
-    top: 7vh;
     width: 100%;
     -webkit-box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3), inset 0 0 7px 0 rgba(0, 0, 0, 0.5);
     -moz-box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3), inset 0 0 7px 0 rgba(0, 0, 0, 0.5);
@@ -95,30 +72,19 @@ header h2 {
     margin: 5px;
 }
 
-button {
-    font-weight: 400;
-    color: #fff;
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
-    border: 1px solid #2783ba;
-    border-radius: 5px;
-    background: rgb(66,173,237);
-    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+/****** MAP ******/
+#map-holder {
+    background: #f5f5f5;
+    height: 72vh;
+    position: relative;
 }
 
-
-.filter_arrow {
-    background: rgb(246,246,246) url(../img/filter-span.png) no-repeat;
-    position: absolute;
-    width: 10px;
-    height: 5vh;
-    margin-top: 4%;
-    right: 1%;
-    z-index: 0;
+#map {
+    height: 100%;
+    overflow: hidden;
 }
 
+/****** DRAWER ******/
 #drawer {
     will-change: transform, scroll-position, contents;
     width: 100%;
@@ -144,7 +110,9 @@ button {
     -webkit-user-select: none;  /* Chrome all / Safari all */
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */
-    user-select: none;         
+    user-select: none;
+    margin: 0;
+    font-size: 1.5em;
     text-shadow: 1px 1px #ffffff;
 
     /* IE proprietary filter that emulates CSS3 text-shadow property for IE9 and older */
@@ -156,17 +124,25 @@ button {
     font-weight: 600;
     height: 8vh;
     text-align: center;
-    line-height: 8vh;
+    line-height: 7vh;
+}
+
+#venue-details img {
+    /*max-width: 100%;*/
+    /*max-height: 100%;*/
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    width: 100%;
+    height: 100%;
+    object-position: 50% 50%;
+    object-fit: cover;
 }
 
 .venue-image {
-    text-align: center;
-    line-height: 80px;
     color: rgba(0, 0, 0, 0.001);
     filter:alpha(opacity=100); /* For IE8 and earlier */
-    vertical-align: middle;
     position: relative;
-    width: 80px;
     height: 80px;
     padding: 0;
     -webkit-box-shadow: 1px 1px 0 #e3e3e3;
@@ -184,6 +160,7 @@ button {
 ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 li {
@@ -191,7 +168,7 @@ li {
 }
 
 .drawer-content {
-    padding: 3% 3% 3% 3%;
+    padding: 2% 2% 2% 2%;
 }
 
 .active-listing {
@@ -200,12 +177,6 @@ li {
 
 .active-listing:focus {
     outline: none;
-}
-
-#venue-details img {
-    min-width: 100%;
-    max-height: 100%;
-    object-fit: cover;
 }
 
 .venue-text {
@@ -219,6 +190,7 @@ li {
     font-weight: 600;
     font-size: 1.2em;
     color: #2a2a2a;
+    margin: 0;
     margin-bottom: -4px;
     padding-bottom: 1%;
 }
@@ -228,7 +200,6 @@ li {
     margin-bottom: -4px;
     padding-bottom: 1%;
 }
-
 
 /* use sprite image for background. Initially is set to show grey stars */
 .stars, .stars > span {
@@ -244,6 +215,7 @@ li {
     background-position: 0 0;
 }
 
+/****** FOOTER ******/
 footer {
     position: absolute;
     bottom: 0;
@@ -260,6 +232,11 @@ footer a, footer a:visited, footer a:hover {
     text-decoration: none;
 }
 
+footer p {
+    margin: 0;
+}
+
+/****** ERROR *****/
 #fragment {
     position: absolute;
     font-size: 1.2em;
@@ -267,12 +244,12 @@ footer a, footer a:visited, footer a:hover {
     height: auto;
     border: 1px solid #ccc;
     border-radius: 10px;
-    display: block;
+    display: none;
     padding: 25px;
     background-color: white;
     top: 15vh;
-    left: 20%;
-    width: 60%;
+    left: 15%;
+    width: 70%;
     z-index: 5;
 }
 
@@ -284,20 +261,22 @@ footer a, footer a:visited, footer a:hover {
     vertical-align: middle;
 }
 
-@media only screen and (min-width: 960px) {
+/****** MEDIA QUERIES ******/
+@media only screen and (min-width: 768px) {
     nav {
         position: absolute;
-        width: 25vw;
-        border: 1px solid rgba( 0, 0, 0, 0.2 );
+        width: 40vw;
+        /*border: 1px solid rgba( 0, 0, 0, 0.2 );*/
     }
 
     #map-holder {
         height: 87vh;
-        width: 75vw;
+        width: 60vw;
         float: right;
     }
 
     #drawer-header {
+        display: none;
         border-radius: 0;
         border: 0;
         border-bottom: 1px solid rgba( 0, 0, 0, 0.2 );
@@ -307,7 +286,7 @@ footer a, footer a:visited, footer a:hover {
         position: absolute;
         top: 15vh;
         height: 80vh;
-        width: 25vw;
+        width: 40vw;
         border: 1px solid rgba( 0, 0, 0, 0.2 );
         -webkit-transform: none;
         -moz-transform: none;
@@ -318,6 +297,24 @@ footer a, footer a:visited, footer a:hover {
     }
 
     #venue-details {
-        height: 72vh;
+        height: 80vh;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    nav {
+        width: 35vw;
+    }
+
+    #map-holder {
+        width: 65vw;
+    }
+
+    #drawer, #drawer.open {
+        width: 35vw;
+    }
+
+    .venue-image, .venue-text {
+        height: 100px;
     }
 }

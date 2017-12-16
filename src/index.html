@@ -9,7 +9,7 @@
     <link rel="preload" href="img/eat.png" as="image">
     <link rel="preload" href="img/shop.png" as="image">
     <link rel="preload" href="img/stay.png" as="image">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -28,9 +28,9 @@
                 <label>
                     <input type="checkbox" value="all" data-bind="checked: allSelected"/>All
                 </label>
-                <!-- ko foreach: toggleLabels -->
+                <!-- ko foreach: categories -->
                 <label>
-                    <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.selectedLabels, event: { change: $parent.toggleMarkers }"><span data-bind="attr: { id: $data.toLowerCase() }, text: $data"></span>
+                    <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.selectedValues, event: { change: $parent.filterMarkers }"><span data-bind="attr: { id: $data.toLowerCase() }, text: $data"></span>
                 </label>
                 <!-- /ko -->
             </div>
@@ -39,20 +39,21 @@
     <!---End Nav-->
     <div class="row" id="map-holder">
         <div id="map"></div>
+        <div id="fragment"><span style='cursor:pointer' id='close-span'>x</span></div>
     </div>
     <!---End Map Section-->
     <div class="row" id="drawer" data-bind="click: toggleDrawer">
         <h2 class="col-xs-12" id="drawer-header">Listing Results</h2>
-        <div class="col-xs-12" id="venue-details" data-bind="click: handleMarker, clickBubble: false">
-            <!-- ko if: $root.selectedLabels().includes('Eat') -->
+        <div class="col-xs-12" id="venue-details" data-bind="click: handleVenueClick, clickBubble: false">
+            <!-- ko if: selectedValues().includes('Eat') -->
             <ul data-bind="foreach: eatListingResults">
                 <li>
                     <!-- Currently clicked marker's id compared to each object in this category to toggle 'active-listing' on match -->
                     <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === id }">
-                        <div class="col-xs-4 venue-image">
+                        <div class="col-xs-3 venue-image">
                             <img data-bind="attr: {src: photo}" src="" alt="venue image">
                         </div>
-                        <div class="col-xs-8 venue-text">
+                        <div class="col-xs-9 venue-text">
                             <!--click and clickBubble allow for the default click action on a link tag-->
                             <h3><a data-bind="attr: {href: url}, text: title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
                             <p data-bind="text: address"></p>
@@ -63,15 +64,15 @@
                 </li>
             </ul>
             <!-- /ko -->
-            <!-- ko if: $root.selectedLabels().includes('Shop') -->
+            <!-- ko if: selectedValues().includes('Shop') -->
             <ul data-bind="foreach: shopListingResults">
                 <li>
                     <!-- Currently clicked marker's id compared to each object in this category to toggle 'active-listing' on match -->
                     <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === id }">
-                        <div class="col-xs-4 venue-image">
+                        <div class="col-xs-3 venue-image">
                             <img data-bind="attr: {src: photo}" src="" alt="venue image">
                         </div>
-                        <div class="col-xs-8 venue-text">
+                        <div class="col-xs-9 venue-text">
                             <!--click and clickBubble allow for the default click action on a link tag-->
                             <h3><a data-bind="attr: {href: url}, text: title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
                             <p data-bind="text: address"></p>
@@ -82,15 +83,15 @@
                 </li>
             </ul>
             <!-- /ko -->
-            <!-- ko if: $root.selectedLabels().includes('Stay') -->
+            <!-- ko if: selectedValues().includes('Stay') -->
             <ul data-bind="foreach: stayListingResults">
                 <li>
                     <!-- Currently clicked marker's id compared to each object in this category to toggle 'active-listing' on match -->
                     <div class="col-xs-12 drawer-content" tabindex="0" data-bind="css: { 'active-listing' : $root.currentMarker().id === id }">
-                        <div class="col-xs-4 venue-image">
+                        <div class="col-xs-3 venue-image">
                             <img data-bind="attr: {src: photo}" src="" alt="venue image">
                         </div>
-                        <div class="col-xs-8 venue-text">
+                        <div class="col-xs-9 venue-text">
                             <!--click and clickBubble allow for the default click action on a link tag-->
                             <h3><a data-bind="attr: {href: url}, text:title, click: function() { return true; }, clickBubble: false" target="_blank"></a></h3>
                             <p data-bind="text: address"></p>
@@ -114,7 +115,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/script.js"></script>
     <!-- Moved Google Maps API script tag below the custom code to make sure the callback function is declared before Maps API is loaded -->
-    <script async defer onerror="mapErrorMsg()" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&libraries=places&callback=viewModel.init"></script>
+    <script async defer onerror="viewModel.mapErrorMsg()" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSNOWPh2xCf2RnBzwrsHL2ZobHMGXsek&libraries=places&callback=viewModel.init"></script>
 </body>
 </html>
 

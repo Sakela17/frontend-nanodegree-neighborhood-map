@@ -4,8 +4,6 @@
 var fourSquareData = {
     client_id: 'EVSGF4DMPKFDQUNTWREGWPAP1TEL1YNLTC2YAUK13BJHCQNY',
     client_key: 'TH55VNBSYPX3ZZOPAERLTEBLTQBDWUPUCISGTBRJH3JM3ZZG',
-    // poiCategories: [{categoryName: 'stay', categoryId: '4bf58dd8d48988d1fa931735'}]
-    // poiCategories: [{name: 'shop', categoryId: '4d4b7105d754a06378d81259'}]
     poiCategories: [
         {categoryName: 'eat', categoryId: '4d4b7105d754a06374d81259'},
         {categoryName: 'shop', categoryId: '4d4b7105d754a06378d81259'},
@@ -22,11 +20,11 @@ var mapData = {
     bounds: null
 };
 
-/* Methods and properties to convert data and control UI */
+/* Placeholder for properties and methods that convert data and control UI */
 var viewModel = {
     /*
      * Invoked from Google Maps API script in index.html
-     * Execute initMap() and sendAjaxRequests()
+     * Executes initMap() and sendAjaxRequests()
      */
     init: function() {
         this.initMap();
@@ -34,23 +32,23 @@ var viewModel = {
     },
     /*
      * Invoked from init method
-     * Create Google map. Store map instances in mapData object
+     * Creates Google map. Stores map instances in mapData object
      */
     initMap: function() {
-        var md = mapData;
+        const md = mapData;
         md.bounds = new google.maps.LatLngBounds();
         md.map = new google.maps.Map(document.getElementById('map'), md.mapProp);
         md.infowindow = new google.maps.InfoWindow();
     },
     /*
      * Invoked form init method
-     * Send AJAX requests to Foursquare API for categories listed in fourSquareData.poiCategories array
+     * Sends AJAX requests to Foursquare API for categories listed in fourSquareData.poiCategories array
      */
     sendAjaxRequests:  function() {
-        var self = this,
-            fs = fourSquareData,
-            venueObj;
-        /* Get venues within 150 meters of Ciutat Vella (lat: 41.380923, lng: 2.16769) for each POI category */
+        const self = this,
+              fs = fourSquareData;
+        var venueObj = {};
+        /* Gets venues within 150 meters of Ciutat Vella (lat: 41.380923, lng: 2.16769) for each POI category */
         fs.poiCategories.forEach(function(poi) {
             $.ajax({
                 url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.16769&radius=150&categoryId=' + poi.categoryId + '&client_id=' + fs.client_id + '&client_secret=' + fs.client_key + '&v=20131124',
@@ -76,28 +74,22 @@ var viewModel = {
                 },
                 error: function() {
                     self.errorMsg(poi.categoryName);
-                },
-                complete: function(obj, string) {
-                    // console.log(string);
-                    // if (string === 'success') { viewModel[poi.categoryName + 'ListingResults'].valueHasMutated(); }
                 }
             });
         });
     },
     /*
      * Invoked from sendAjaxRequests method
-     * Send AJAX request to Foursquare API to get details for specific venue
-     * Get 'photo' and 'rating' property values, set properties
-     * Call createMarker method upon complete
+     * Sends AJAX request to Foursquare API to get 'photo' and 'rating' details for specific venue
+     * Calls createMarker method upon complete
      */
     getVenueDetails: function(venue, poi) {
-        var fs = fourSquareData,
-            venueDetails;
+        const fs = fourSquareData;
         $.ajax({
             url: 'https://api.foursquare.com/v2/venues/' + venue.id + '?&client_id=' + fs.client_id + '&client_secret=' + fs.client_key + '&v=20131124',
             dataType: 'jsonp',
             success: function(data) {
-                venueDetails = data.response.venue;
+                const venueDetails = data.response.venue;
                 if (venueDetails.hasOwnProperty("rating")) {
                     venue.rating = venueDetails.rating / 2;  // convert to 5-point rating and set property
                 }
@@ -115,21 +107,20 @@ var viewModel = {
     },
     /*
      * Invoked from getVenueDetails method
-     * Create Google Maps API marker
-     * Add event listener on click
-     * Push marker to an observable array
+     * Creates Google Maps API marker
+     * Adds event listener to marker
+     * Pushes marker to an observable array
      */
     createMarker: function(venue, poi) {
-        var self = this,
-            md = mapData,
-            currMarker,
-            drawer = $('#drawer'),
-            marker;
+        const self = this,
+              md = mapData,
+              venDetEl = $('#venue-details'),
+              drawer = $('#drawer');
         /*
-         * Set specific properties with venue details obtained from FourSquare API
-         * Add marker to the map
+         * Sets specific properties with venue details obtained from FourSquare API
+         * Adds marker to the map
          */
-        marker = new google.maps.Marker({
+        const marker = new google.maps.Marker({
             map: md.map,
             position: {lat: venue.lat, lng: venue.lng},
             title: venue.name,
@@ -143,13 +134,13 @@ var viewModel = {
             url: venue.url
         });
         /*
-         * Add event listener to bring up infoWindow on click
-         * Set clicked marker as currentMarker observable
-         * Handle animation and #drawer position
+         * Brings up infoWindow on click
+         * Sets clicked marker as currentMarker observable
+         * Handles animation and #drawer position
          */
         marker.addListener('click', function() {
-            currMarker = self.currentMarker();
-            if (self.dropdownMenu()) { viewModel.dropdownMenu(false) }  // hide checkboxes if previously opened
+            const currMarker = self.currentMarker();
+            if (self.dropdownMenu()) { self.dropdownMenu(false) }  // hide checkboxes if previously opened
             if (this !== currMarker) {  // check if new marker is clicked
                 md.infowindow.open(md.map, this);  // make info window visible
                 md.infowindow.setContent(this.title);  // display venue name in the info window
@@ -160,17 +151,10 @@ var viewModel = {
                     drawer.addClass('open');
                 }
                 /* Set vertical position of scroll bar to show selected marker at the top of #venue-details container */
-                var venDetEl = $('#venue-details');
                 venDetEl.scrollTop(venDetEl.scrollTop() + ($('.active-listing').offset().top - venDetEl.offset().top));
             } else {
                 /* Toggle #drawer (Listing Results) tab */
                 drawer.toggleClass("open");
-                /* Toggle animation when the same marker is clicked */
-                // if (this.getAnimation() !== null) {
-                //     this.setAnimation(null);
-                // } else {
-                //     this.setAnimation(google.maps.Animation.BOUNCE);
-                // }
             }
         });
         /* Push marker to an observable array associated with one of the POI categories */
@@ -179,127 +163,144 @@ var viewModel = {
     },
     /*
      * Invoked from createMarker method
-     * Animate clicked marker and remove animation from previously selected marker
+     * Animates clicked marker and removes animation from previously selected marker
      */
     animateMarker: function(marker, currMarker) {
-        /* This check is needed for the very first click when current marker is an empty object */
+        /* Don't set animation if currentMarker is set to an empty object */
         if (currMarker.hasOwnProperty('animation')) { currMarker.setAnimation(null); }
         marker.setAnimation(google.maps.Animation.BOUNCE);
     },
-    /* Set KO visible binding to hide/show #checkboxes element */
+    /* Handles KO visible binding that hides/shows #checkboxes element */
     dropdownMenu: ko.observable(false),
-    /* Set KO binding for 'click' event to hide/show #drawer element */
+    /* Handles KO 'click' binding that hides/shows #drawer element */
     toggleDrawer: function() {
-        var drawer = $('#drawer');
+        const drawer = $('#drawer');
         drawer.toggleClass("open");
     },
-    /*
-     * Set KO observable for clicked marker
-     * Marker's id used to identify object in 'Listing Results' container to toggle 'active-listing'  */
+    /* Stores information of clicked marker */
     currentMarker: ko.observable({}),
-    /*
-     * Set KO observable arrays to hold Marker objects
-     * Specific marker's object properties bound to the elements in 'Listing Results' container
-     */
+    /* Stores Marker objects for specific POI category */
     eatListingResults: ko.observableArray([]),
     shopListingResults: ko.observableArray([]),
     stayListingResults: ko.observableArray([]),
-    /* Set KO binding for 'click' event */
-    handleMarker: function(vm, e) {
-        var context = ko.contextFor(e.target);
-        var marker = context.$data;
-        var currMarker = vm.currentMarker();
-        var parentElem = e.target.closest(".drawer-content");
+    /*
+     * Handles KO 'click' binding in list view container
+     * Uses event delegation to find clicked location in the list view
+     * Handles 'active-listing' class and marker animation
+     */
+    handleVenueClick: function(vm, e) {
+        const md = mapData,
+              context = ko.contextFor(e.target),  //  returns binding context for clicked location
+              marker = context.$data,  // returns marker object associated with clicked location
+              currMarker = vm.currentMarker(),
+              parentElem = e.target.closest(".drawer-content");  // gets closest element with class 'drawer-content'
         $(".active-listing").removeClass("active-listing");
-        $(parentElem).toggleClass("active-listing");
-        console.log($(parentElem));
-
-        // If new marker is clicked
+        $(parentElem).toggleClass("active-listing");  // sets 'active-listing' class
+        /* Handle animation and show info window for marker associated with clicked location */
         if (marker !== currMarker) {
             vm.animateMarker(marker, currMarker);
-            mapData.infowindow.setContent(marker.title);
-            mapData.infowindow.open(mapData.map, marker);
-
+            md.infowindow.setContent(marker.title);
+            md.infowindow.open(md.map, marker);
+            md.map.setCenter(marker.getPosition());  // center marker on the map
+            vm.currentMarker(marker);  // passes marker object to currentMarker observable
         }
-
-        // console.log(vm.currentMarker());
-        // context.$data.setAnimation(google.maps.Animation.BOUNCE);
-        vm.currentMarker(marker);
-        console.log(vm.currentMarker());
     },
-    toggleLabels: ["Eat", "Shop", "Stay"],
-    selectedLabels: ko.observableArray(["Eat", "Shop", "Stay"]),
+    /* Placeholder for values used in drop-down container */
+    categories: ["Eat", "Shop", "Stay"],
+    /* Sets array of parameters for KO 'checked' binding  */
+    selectedValues: ko.observableArray(["Eat", "Shop", "Stay"]),  // initially selects all 3 categories
+    /* Populates values into KO 'options' control */
     fillOptions: ko.pureComputed(function() {
-        var str = viewModel.selectedLabels()
+        var str = viewModel.selectedValues()
             .map(function(item) {
                 return item;
             })
             .join(", ");
-        return str || "-- Select your POI --";
+        return str || "-- Select your POI --";  // returns values from selectedValues array or message
     }),
-    // Handle checkbox' toggle events in drop down menu
-    toggleMarkers:  function(labelName){
+    /*
+     * Invoked by 'change' event bound to checkboxes
+     * Displays/hides subset of markers on the map
+     */
+    filterMarkers:  function(checkedValue){
         var vm = viewModel,
+            md = mapData,
             currMarker = vm.currentMarker,
-            // Get array of markers associated with (un)checked label
-            markersData = vm[labelName.toLowerCase() + "ListingResults"]();
-        // Show markers associated with checked label
-        if (vm.selectedLabels().includes(labelName)) {
-            markersData.forEach(function(marker) { marker.setMap(mapData.map); });
-            mapData.map.fitBounds(mapData.bounds);}
-        // Hide markers associated with unchecked label
+            markersData = vm[checkedValue.toLowerCase() + "ListingResults"]();  // get array of markers associated with checkbox
+        if (vm.selectedValues().includes(checkedValue)) {
+            /* Display markers on the map associated with checked category */
+            markersData.forEach(function(marker) { marker.setMap(md.map); });
+            md.map.fitBounds(md.bounds);}
         else {
-            // Set currentMarker to an empty object if it's included in array of to-be-hidden markers
-            // Close infoWindow (if open)
             if (markersData.includes(currMarker())) {
-                currMarker({});
-                mapData.infowindow.close();
+                currMarker({});  // empty currentMarker if it's included in array of to-be-hidden markers
+                md.infowindow.close();  // close infoWindow (if open)
             }
+            /* Hides markers on the map associated with unchecked category */
             markersData.forEach(function(marker) { marker.setMap(null); });
         }
+
     },
-    // Error message for ajax() calls in sendAjaxRequests()
+    /*
+     * Invoked from sendAjaxRequests()
+     * Shows error message in HTML for failed ajax() calls
+     */
     errorMsg: function(label) {
-        $("#map-holder").append("<div id='fragment'><span style='cursor:pointer' id='close-span' onclick=$('#fragment').css('display','none')>x</span><p>Failed to load resources for category " + label.italics() + ". Please try again soon.</p></div>");
+        const fragment = $('#fragment');
+        fragment.css('display','block');
+        fragment.append("<p>Failed to load resources for category " + label.italics() + "." + "<br/>" + "Please try again soon.</p>");
         $("#" + label).append("<strong> - failed to load</strong>");
+        $('#close-span').click(function() {
+            fragment.css('display','none')
+        });
     },
-    // Error Handling for Google Maps API script
+    /*
+     * Invoked from Google Maps API script in index.html
+     * Shows error message for Google Maps API script
+     */
     mapErrorMsg: function(){
-        $("#map-holder").append("<div id='fragment'><span style='cursor:pointer' id='close-span' onclick=$('#fragment').css('display','none')>x</span><p>Failed to load Google Maps." + "\n" + "Please try again soon.</p></div>");
-        return true;
+        const fragment = $('#fragment');
+        fragment.css('display','block');
+        fragment.append("<p>Failed to load Google Maps." + "<br/>" + "Please try again soon.</p>");
     }
 };
+
+/*
+ * Handles functionality of checkbox that selects all POI categories
+ * Writes to viewModel.selectedValues observable array based on the state of the checkbox
+ * Displays/hides subset of markers on the map
+ */
 viewModel.allSelected = ko.computed({
     read: function() {
-        return this.selectedLabels().length === 3;
+        return this.selectedValues().length === 3;  // 'checked' binding reads returned boolean to check/uncheck the form control on screen
     },
-    write: function(value) {
-        var selectedLabels = this.selectedLabels();
-        var toggleLabels = this.toggleLabels.slice(0);
-        var unSelectedLabels = [];
+    write: function(value) {  // parameter is a boolean
+        var selectedValues = this.selectedValues();
+        var categories = this.categories.slice(0);
+        var unselectedValues = [];
         if(value) {
-            for (var i = 0; i < toggleLabels.length; i++) {
-                var key = toggleLabels[i];
-                if (selectedLabels.indexOf(key) === -1) {
-                    unSelectedLabels.push(key);
+            for (var i = 0; i < categories.length; i++) {
+                var key = categories[i];
+                if (selectedValues.indexOf(key) === -1) {
+                    unselectedValues.push(key);
                 }
             }
-            unSelectedLabels.forEach(function(label) {
-                var markersData = label.toLowerCase() + "ListingResults";
+            unselectedValues.forEach(function(item) {
+                var markersData = item.toLowerCase() + "ListingResults";
                 viewModel[markersData]().forEach(function(marker) {
                     marker.setMap(mapData.map);
                 });
             });
-            this.selectedLabels(toggleLabels);
+            this.selectedValues(categories);
             mapData.map.fitBounds(mapData.bounds);
         } else {
-            toggleLabels.forEach(function(label) {
-                var markersData = label.toLowerCase() + "ListingResults";
+            selectedValues.forEach(function(item) {
+                var markersData = item.toLowerCase() + "ListingResults";
                 viewModel[markersData]().forEach(function(marker) {
                     marker.setMap(null);
                 });
             });
-            this.selectedLabels([]);
+            this.selectedValues([]);
         }
     },
     owner: viewModel
