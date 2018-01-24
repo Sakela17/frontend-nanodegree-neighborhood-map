@@ -51,7 +51,7 @@ var viewModel = {
         /* Gets venues within 150 meters of Ciutat Vella (lat: 41.380923, lng: 2.16769) for each POI category */
         fs.poiCategories.forEach(function(poi) {
             $.ajax({
-                url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.16769&radius=150&categoryId=' + poi.categoryId + '&client_id=' + fs.client_id + '&client_secret=' + fs.client_key + '&v=20131124',
+                url: 'https://api.foursquare.com/v2/venues/search/?ll=41.380923,2.16769&radius=100&categoryId=' + poi.categoryId + '&client_id=' + fs.client_id + '&client_secret=' + fs.client_key + '&v=20131124',
                 dataType: 'json',
                 success: function(data) {
                     data.response.venues.forEach(function(venue) {
