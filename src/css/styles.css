@@ -188,6 +188,7 @@ li {
     height: 80px;
     padding: 1% 0 3% 2%;
     font-size: 100%;
+    white-space: nowrap;
 }
 
 .venue-text h3 {
@@ -197,12 +198,21 @@ li {
     margin: 0;
     margin-bottom: -4px;
     padding-bottom: 1%;
+
+}
+
+.venue-text a {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis
 }
 
 .venue-text p {
     font-weight: 300;
     margin-bottom: -4px;
     padding-bottom: 1%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* use sprite image for background. Initially is set to show grey stars */
